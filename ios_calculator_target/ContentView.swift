@@ -1,5 +1,6 @@
 import SwiftUI
 import AudioToolbox
+import Photos
 
 struct ContentView: View {
     @StateObject private var engine = VaultEngine.shared

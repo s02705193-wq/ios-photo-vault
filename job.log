@@ -1,347 +1,502 @@
-﻿2026-11-07T19:57:43.5075070Z Current runner version: '2.338.2'
-2026-11-07T19:57:43.5114530Z ##[group]Runner Image Provisioner
-2026-11-07T19:57:43.5115390Z Hosted Compute Agent
-2026-11-07T19:57:43.5115860Z Version: 20261028.624
-2026-11-07T19:57:43.5116340Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
-2026-11-07T19:57:43.5116840Z Build Date: 2026-10-28T21:51:42Z
-2026-11-07T19:57:43.5117290Z Worker ID: {1ede09ea-cc83-4610-95ee-ae8c30d73dcc}
-2026-11-07T19:57:43.5117780Z Region: westus
-2026-11-07T19:57:43.5118180Z Cloud: MacCloud
-2026-11-07T19:57:43.5118640Z ##[endgroup]
-2026-11-07T19:57:43.5121960Z ##[group]Operating System
-2026-11-07T19:57:43.5123690Z macOS
-2026-11-07T19:57:43.5124640Z 26.7.2
-2026-11-07T19:57:43.5125590Z 25G332
-2026-11-07T19:57:43.5126860Z ##[endgroup]
-2026-11-07T19:57:43.5127340Z ##[group]Runner Image
-2026-11-07T19:57:43.5128280Z Image: macos-26-arm64
-2026-11-07T19:57:43.5128960Z Version: 20261102.0473.1
-2026-11-07T19:57:43.5131460Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261102.0473/images/macos/macos-26-arm64-Readme.md
-2026-11-07T19:57:43.5133440Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261102.0473
-2026-11-07T19:57:43.5134350Z ##[endgroup]
-2026-11-07T19:57:43.5135230Z ##[group]GITHUB_TOKEN Permissions
-2026-11-07T19:57:43.5137380Z Contents: write
-2026-11-07T19:57:43.5137790Z Metadata: read
-2026-11-07T19:57:43.5138240Z ##[endgroup]
-2026-11-07T19:57:43.5140790Z Secret source: Actions
-2026-11-07T19:57:43.5141560Z Cache mode: write
-2026-11-07T19:57:43.5142070Z Prepare workflow directory
-2026-11-07T19:57:43.5476280Z Prepare all required actions
-2026-11-07T19:57:43.5529020Z Getting action download info
-2026-11-07T19:57:43.9641690Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
-2026-11-07T19:57:44.2571710Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
-2026-11-07T19:57:44.4867290Z Complete job name: Build iOS IPA Binaries
-2026-11-07T19:57:44.5708400Z ##[group]Run actions/checkout@v4
-2026-11-07T19:57:44.5709120Z with:
-2026-11-07T19:57:44.5709520Z   repository: s02705193-wq/ios-photo-vault
-2026-11-07T19:57:44.5712580Z   token: ***
-2026-11-07T19:57:44.5712970Z   ssh-strict: true
-2026-11-07T19:57:44.5713340Z   ssh-user: git
-2026-11-07T19:57:44.5713740Z   persist-credentials: true
-2026-11-07T19:57:44.5714170Z   clean: true
-2026-11-07T19:57:44.5714580Z   sparse-checkout-cone-mode: true
-2026-11-07T19:57:44.5715040Z   fetch-depth: 1
-2026-11-07T19:57:44.5715430Z   fetch-tags: false
-2026-11-07T19:57:44.5715830Z   show-progress: true
-2026-11-07T19:57:44.5716240Z   lfs: false
-2026-11-07T19:57:44.5716610Z   submodules: false
-2026-11-07T19:57:44.5717010Z   set-safe-directory: true
-2026-11-07T19:57:44.5717460Z   allow-unsafe-pr-checkout: false
-2026-11-07T19:57:44.5718150Z ##[endgroup]
-2026-11-07T19:57:45.8351050Z Syncing repository: s02705193-wq/ios-photo-vault
-2026-11-07T19:57:45.8498980Z ##[group]Getting Git version info
-2026-11-07T19:57:45.8500400Z Working directory is '/Users/runner/work/ios-photo-vault/ios-photo-vault'
-2026-11-07T19:57:45.8616360Z [command]/opt/homebrew/bin/git version
-2026-11-07T19:57:45.9455030Z git version 2.56.0
-2026-11-07T19:57:45.9486010Z ##[endgroup]
-2026-11-07T19:57:45.9505310Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/3dea4d22-4478-4b7f-af1d-503baf29af60/.gitconfig'
-2026-11-07T19:57:45.9513320Z Temporarily overriding HOME='/Users/runner/work/_temp/3dea4d22-4478-4b7f-af1d-503baf29af60' before making global git config changes
-2026-11-07T19:57:45.9557830Z Adding repository directory to the temporary git global config as a safe directory
-2026-11-07T19:57:45.9570040Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:57:45.9823730Z Deleting the contents of '/Users/runner/work/ios-photo-vault/ios-photo-vault'
-2026-11-07T19:57:45.9839640Z ##[group]Initializing the repository
-2026-11-07T19:57:45.9853630Z [command]/opt/homebrew/bin/git init /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:57:46.0914470Z hint: Using 'master' as the name for the initial branch. This default branch name
-2026-11-07T19:57:46.0917180Z hint: will change to "main" in Git 3.0. To configure the initial branch name
-2026-11-07T19:57:46.0921180Z hint: to use in all of your new repositories, which will suppress this warning,
-2026-11-07T19:57:46.0946390Z hint: call:
-2026-11-07T19:57:46.1049710Z hint:
-2026-11-07T19:57:46.1057320Z hint: 	git config --global init.defaultBranch <name>
-2026-11-07T19:57:46.1061170Z hint:
-2026-11-07T19:57:46.1063490Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
-2026-11-07T19:57:46.1065780Z hint: 'development'. The just-created branch can be renamed via this command:
-2026-11-07T19:57:46.1082240Z hint:
-2026-11-07T19:57:46.1083880Z hint: 	git branch -m <name>
-2026-11-07T19:57:46.1085780Z hint:
-2026-11-07T19:57:46.1087330Z hint: Disable this message with "git config set advice.defaultBranchName false"
-2026-11-07T19:57:46.1089980Z Initialized empty Git repository in /Users/runner/work/ios-photo-vault/ios-photo-vault/.git/
-2026-11-07T19:57:46.1094090Z [command]/opt/homebrew/bin/git remote add origin https://github.com/s02705193-wq/ios-photo-vault
-2026-11-07T19:57:46.1139740Z ##[endgroup]
-2026-11-07T19:57:46.1141530Z ##[group]Disabling automatic garbage collection
-2026-11-07T19:57:46.1143060Z [command]/opt/homebrew/bin/git config --local gc.auto 0
-2026-11-07T19:57:46.1261130Z ##[endgroup]
-2026-11-07T19:57:46.1262660Z ##[group]Setting up auth
-2026-11-07T19:57:46.1264230Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
-2026-11-07T19:57:46.1391490Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2026-11-07T19:57:46.2877100Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-11-07T19:57:46.2972000Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2026-11-07T19:57:46.4886050Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
-2026-11-07T19:57:46.4982000Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2026-11-07T19:57:46.6777010Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
-2026-11-07T19:57:46.7083270Z ##[endgroup]
-2026-11-07T19:57:46.7090530Z ##[group]Fetching the repository
-2026-11-07T19:57:46.7093720Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7020936c021cd8897c5720cdbe8610bbfa0868b4:refs/remotes/origin/main
-2026-11-07T19:57:47.5805020Z From https://github.com/s02705193-wq/ios-photo-vault
-2026-11-07T19:57:47.5806210Z  * [new ref]         7020936c021cd8897c5720cdbe8610bbfa0868b4 -> origin/main
-2026-11-07T19:57:47.5811850Z ##[endgroup]
-2026-11-07T19:57:47.5812310Z ##[group]Determining the checkout info
-2026-11-07T19:57:47.5813060Z ##[endgroup]
-2026-11-07T19:57:47.5818930Z [command]/opt/homebrew/bin/git sparse-checkout disable
-2026-11-07T19:57:47.5941260Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
-2026-11-07T19:57:47.6133830Z ##[group]Checking out the ref
-2026-11-07T19:57:47.6135070Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
-2026-11-07T19:57:47.6574390Z Switched to a new branch 'main'
-2026-11-07T19:57:47.6604540Z branch 'main' set up to track 'origin/main'.
-2026-11-07T19:57:47.6628540Z ##[endgroup]
-2026-11-07T19:57:47.6735700Z [command]/opt/homebrew/bin/git log -1 --format=%H
-2026-11-07T19:57:47.6871250Z 7020936c021cd8897c5720cdbe8610bbfa0868b4
-2026-11-07T19:57:47.7654310Z ##[group]Run sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
-2026-11-07T19:57:47.7655260Z [36;1msudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app[0m
-2026-11-07T19:57:47.7743410Z shell: /bin/bash -e {0}
-2026-11-07T19:57:47.7744460Z ##[endgroup]
-2026-11-07T19:57:47.8626290Z xcode-select: error: invalid developer directory '/Applications/Xcode_15.4.app'
-2026-11-07T19:57:47.9532650Z ##[group]Run brew install xcodegen
-2026-11-07T19:57:47.9533030Z [36;1mbrew install xcodegen[0m
-2026-11-07T19:57:47.9590100Z shell: /bin/bash -e {0}
-2026-11-07T19:57:47.9590370Z ##[endgroup]
-2026-11-07T19:57:53.4283240Z [32m==>[0m [1mDownloading bottle manifests[0m
-2026-11-07T19:57:53.4362980Z ✔︎ Bottle Manifest xcodegen (2.46.0)
-2026-11-07T19:57:53.4402020Z [32m==>[0m [1mFetching downloads for: [32mxcodegen[39m[0m
-2026-11-07T19:57:55.8741750Z ✔︎ Bottle xcodegen (2.46.0)
-2026-11-07T19:57:55.9253020Z [34m==>[0m [1mPouring xcodegen--2.46.0.arm64_tahoe.bottle.1.tar.gz[0m
-2026-11-07T19:57:57.0431390Z 🍺  /opt/homebrew/Cellar/xcodegen/2.46.0: 38 files, 7.4MB
-2026-11-07T19:57:57.0975420Z ##[group]Run xcodegen generate
-2026-11-07T19:57:57.0976720Z [36;1mxcodegen generate[0m
-2026-11-07T19:57:57.1080910Z shell: /bin/bash -e {0}
-2026-11-07T19:57:57.1081780Z ##[endgroup]
-2026-11-07T19:57:57.3091740Z ⚙️  Generating plists...
-2026-11-07T19:57:57.3305090Z ⚙️  Generating project...
-2026-11-07T19:57:57.3508460Z ⚙️  Writing project...
-2026-11-07T19:57:57.3789520Z Created project at /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:57:57.3953170Z ##[group]Run xcodebuild -project PhotoVaultSuite.xcodeproj \
-2026-11-07T19:57:57.3954610Z [36;1mxcodebuild -project PhotoVaultSuite.xcodeproj \[0m
-2026-11-07T19:57:57.3955800Z [36;1m           -scheme CalculatorVault \[0m
-2026-11-07T19:57:57.3956710Z [36;1m           -configuration Release \[0m
-2026-11-07T19:57:57.3957430Z [36;1m           -sdk iphoneos \[0m
-2026-11-07T19:57:57.3958410Z [36;1m           -derivedDataPath derived_data_calc \[0m
-2026-11-07T19:57:57.3959460Z [36;1m           CODE_SIGNING_ALLOWED=NO \[0m
-2026-11-07T19:57:57.3960370Z [36;1m           CODE_SIGNING_REQUIRED=NO \[0m
-2026-11-07T19:57:57.3961250Z [36;1m           CODE_SIGN_IDENTITY="" \[0m
-2026-11-07T19:57:57.3962080Z [36;1m           clean build[0m
-2026-11-07T19:57:57.4063450Z shell: /bin/bash -e {0}
-2026-11-07T19:57:57.4064470Z ##[endgroup]
-2026-11-07T19:58:00.1464920Z Command line invocation:
-2026-11-07T19:58:00.1564830Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild -project PhotoVaultSuite.xcodeproj -scheme CalculatorVault -configuration Release -sdk iphoneos -derivedDataPath derived_data_calc CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= clean build
-2026-11-07T19:58:00.1656850Z 
-2026-11-07T19:58:00.1670230Z Build settings from command line:
-2026-11-07T19:58:00.1673350Z     CODE_SIGN_IDENTITY = 
-2026-11-07T19:58:00.1683500Z     CODE_SIGNING_ALLOWED = NO
-2026-11-07T19:58:00.1684000Z     CODE_SIGNING_REQUIRED = NO
-2026-11-07T19:58:00.1684460Z     SDKROOT = iphoneos26.5
-2026-11-07T19:58:00.1685700Z 
-2026-11-07T19:58:08.1053390Z 2026-11-07 19:58:08.098 xcodebuild[3215:13534] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
-2026-11-07T19:58:08.1394840Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
-2026-11-07T19:58:08.1525900Z { platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
-2026-11-07T19:58:08.1631740Z { platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:a49fe78f25ad16496896e4b1a1bf0c253fd47630, name:My Mac }
-2026-11-07T19:58:08.1735520Z { platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
-2026-11-07T19:58:08.2183300Z note: Using codesigning identity override: 
-2026-11-07T19:58:09.5252860Z CreateBuildRequest
-2026-11-07T19:58:09.5254000Z 
-2026-11-07T19:58:09.5254650Z SendProjectDescription
-2026-11-07T19:58:09.6427930Z 
-2026-11-07T19:58:09.6551630Z CreateBuildOperation
-2026-11-07T19:58:09.6656500Z 
-2026-11-07T19:58:09.7375670Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
-2026-11-07T19:58:09.7376190Z ** CLEAN SUCCEEDED **
-2026-11-07T19:58:09.7377210Z { platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
-2026-11-07T19:58:09.7377620Z 
-2026-11-07T19:58:09.7378180Z { platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:a49fe78f25ad16496896e4b1a1bf0c253fd47630, name:My Mac }
-2026-11-07T19:58:09.7379130Z { platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
-2026-11-07T19:58:09.7483860Z note: Using codesigning identity override: 
-2026-11-07T19:58:09.8790840Z ComputePackagePrebuildTargetDependencyGraph
-2026-11-07T19:58:09.8923580Z 
-2026-11-07T19:58:09.8979100Z Prepare packages
-2026-11-07T19:58:09.8979820Z 
-2026-11-07T19:58:09.8997910Z CreateBuildRequest
-2026-11-07T19:58:09.8999820Z 
-2026-11-07T19:58:09.9000060Z SendProjectDescription
-2026-11-07T19:58:09.9220180Z 
-2026-11-07T19:58:09.9221440Z CreateBuildOperation
-2026-11-07T19:58:09.9229760Z 
-2026-11-07T19:58:09.9255440Z ComputeTargetDependencyGraph
-2026-11-07T19:58:09.9458440Z note: Building targets in dependency order
-2026-11-07T19:58:09.9459760Z note: Target dependency graph (1 target)
-2026-11-07T19:58:09.9460410Z     Target 'CalculatorVault' in project 'PhotoVaultSuite' (no dependencies)
-2026-11-07T19:58:09.9467690Z 
-2026-11-07T19:58:09.9471700Z GatherProvisioningInputs
-2026-11-07T19:58:09.9474910Z 
-2026-11-07T19:58:09.9722040Z CreateBuildDescription
-2026-11-07T19:58:10.0446140Z 
-2026-11-07T19:58:10.0451570Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets
-2026-11-07T19:58:15.3950280Z 
-2026-11-07T19:58:15.4054990Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -x c -c /dev/null
-2026-11-07T19:58:15.4125290Z 
-2026-11-07T19:58:15.4177730Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --version --output-format xml1
-2026-11-07T19:58:15.4180050Z 
-2026-11-07T19:58:15.4180940Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
-2026-11-07T19:58:17.0768440Z 
-2026-11-07T19:58:17.0916190Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
-2026-11-07T19:58:17.6616000Z 
-2026-11-07T19:58:17.7034930Z Build description signature: 09fcbbd1549190fa793f99ba35107009
-2026-11-07T19:58:17.7056260Z Build description path: /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/XCBuildData/09fcbbd1549190fa793f99ba35107009.xcbuilddata
-2026-11-07T19:58:17.8263660Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products
-2026-11-07T19:58:17.8382740Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:17.8493780Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products
-2026-11-07T19:58:17.8716940Z 
-2026-11-07T19:58:17.8828090Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex
-2026-11-07T19:58:17.8932080Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:17.9027140Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex
-2026-11-07T19:58:17.9029140Z 
-2026-11-07T19:58:17.9030580Z ClangStatCache /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache
-2026-11-07T19:58:17.9032300Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:17.9034220Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -o /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache
-2026-11-07T19:58:23.4804040Z 
-2026-11-07T19:58:23.4941240Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos
-2026-11-07T19:58:23.5251300Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:23.5353020Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos
-2026-11-07T19:58:23.5498230Z 
-2026-11-07T19:58:23.5604540Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/PhotoVaultSuite-9fff68fc15aabb367d719e1372990f71-VFS-iphoneos/all-product-headers.yaml
-2026-11-07T19:58:23.5701230Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:23.5804950Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/PhotoVaultSuite-9fff68fc15aabb367d719e1372990f71-VFS-iphoneos/all-product-headers.yaml
-2026-11-07T19:58:23.5913880Z 
-2026-11-07T19:58:23.6017020Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
-2026-11-07T19:58:23.6402200Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:23.6518310Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
-2026-11-07T19:58:23.6671400Z 
-2026-11-07T19:58:23.6778600Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/ExplicitPrecompiledModules
-2026-11-07T19:58:23.6889580Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:23.6892140Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/ExplicitPrecompiledModules
-2026-11-07T19:58:23.6999500Z 
-2026-11-07T19:58:23.7207110Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
-2026-11-07T19:58:23.7319690Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
-2026-11-07T19:58:23.7432210Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
-2026-11-07T19:58:23.7533850Z 
-2026-11-07T19:58:23.7535070Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.7537530Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.7538530Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json
-2026-11-07T19:58:23.7539370Z 
-2026-11-07T19:58:23.7540240Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.7541630Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.7542600Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftFileList
-2026-11-07T19:58:23.7543300Z 
-2026-11-07T19:58:23.7544450Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftConstValuesFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.7545720Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.7546940Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftConstValuesFileList
-2026-11-07T19:58:23.7547760Z 
-2026-11-07T19:58:23.7548870Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.LinkFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.7652990Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.7738780Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.LinkFileList
-2026-11-07T19:58:23.7848620Z 
-2026-11-07T19:58:23.7950560Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-OutputFileMap.json (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8020030Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8123590Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-OutputFileMap.json
-2026-11-07T19:58:23.8227140Z 
-2026-11-07T19:58:23.8299640Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8301420Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8303110Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.hmap
-2026-11-07T19:58:23.8303920Z 
-2026-11-07T19:58:23.8305140Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyStaticMetadataFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8310200Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8316910Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyStaticMetadataFileList
-2026-11-07T19:58:23.8317850Z 
-2026-11-07T19:58:23.8318850Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyMetadataFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8320100Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8321070Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyMetadataFileList
-2026-11-07T19:58:23.8321900Z 
-2026-11-07T19:58:23.8322830Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8323980Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8325250Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap
-2026-11-07T19:58:23.8326120Z 
-2026-11-07T19:58:23.8329020Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8331880Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8351020Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap
-2026-11-07T19:58:23.8353060Z 
-2026-11-07T19:58:23.8354560Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8356320Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8358220Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap
-2026-11-07T19:58:23.8359050Z 
-2026-11-07T19:58:23.8360110Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8361400Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8362480Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap
-2026-11-07T19:58:23.8363390Z 
-2026-11-07T19:58:23.8364620Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-non-framework-target-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8366030Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.8510290Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-non-framework-target-headers.hmap
-2026-11-07T19:58:23.8679450Z 
-2026-11-07T19:58:23.8803710Z MkDir /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.8935710Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.9056410Z     /bin/mkdir -p /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app
-2026-11-07T19:58:23.9194030Z 
-2026-11-07T19:58:23.9340540Z MkDir /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/unthinned (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.9347660Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.9348750Z     /bin/mkdir -p /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/unthinned
-2026-11-07T19:58:23.9350420Z 
-2026-11-07T19:58:23.9351740Z MkDir /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/thinned (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.9353460Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.9354540Z     /bin/mkdir -p /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/thinned
-2026-11-07T19:58:23.9355310Z 
-2026-11-07T19:58:23.9355910Z GenerateAssetSymbols /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.9356930Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.9365680Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets --compile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 15.0 --platform iphoneos --bundle-identifier com.utility.calculator --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols-Index.plist
-2026-11-07T19:58:23.9396430Z /* com.apple.actool.compilation-results */
-2026-11-07T19:58:23.9401390Z /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols-Index.plist
-2026-11-07T19:58:23.9403530Z /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.h
-2026-11-07T19:58:23.9406730Z /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.swift
-2026-11-07T19:58:23.9407910Z 
-2026-11-07T19:58:23.9407990Z 
-2026-11-07T19:58:23.9409240Z CompileAssetCatalogVariant thinned /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:23.9411410Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:23.9417090Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets --compile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 15.0 --platform iphoneos
-2026-11-07T19:58:27.5707670Z /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/ContentView.swift:480:1: error: extraneous '}' at top level
-2026-11-07T19:58:27.5830430Z }
-2026-11-07T19:58:27.5932010Z ^
-2026-11-07T19:58:27.6159160Z 
-2026-11-07T19:58:27.6263380Z ** BUILD FAILED **
-2026-11-07T19:58:27.6264370Z SwiftDriver CalculatorVault normal arm64 com.apple.xcode.tools.swift.compiler (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:27.6401000Z 
-2026-11-07T19:58:27.6401800Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:27.6503260Z 
-2026-11-07T19:58:27.6542360Z     builtin-SwiftDriver -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name CalculatorVault -O -whole-module-optimization @/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios15.0 -g -module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -F /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -c -num-threads 3 -Xcc -ivfsstatcache -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache -output-file-map /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -sdk-module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-Swift.h -working-directory /Users/runner/work/ios-photo-vault/ios-photo-vault -no-emit-module-separately-wmo
-2026-11-07T19:58:27.6578880Z The following build commands failed:
-2026-11-07T19:58:27.6580350Z /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/ContentView.swift:480:1: error: Extraneous '}' at top level
-2026-11-07T19:58:27.6686410Z 	SwiftDriver CalculatorVault normal arm64 com.apple.xcode.tools.swift.compiler (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:27.6688000Z }
-2026-11-07T19:58:27.6792240Z 	Building project PhotoVaultSuite with scheme CalculatorVault and configuration Release
-2026-11-07T19:58:27.6795210Z ^ (in target 'CalculatorVault' from project 'PhotoVaultSuite')
-2026-11-07T19:58:27.6896530Z (2 failures)
-2026-11-07T19:58:27.6896740Z 
-2026-11-07T19:58:27.7009110Z ##[error]Process completed with exit code 65.
-2026-11-07T19:58:27.7484640Z Post job cleanup.
-2026-11-07T19:58:28.4540500Z [command]/opt/homebrew/bin/git version
-2026-11-07T19:58:28.5333430Z git version 2.56.0
-2026-11-07T19:58:28.5482630Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/f860c700-1785-4235-a950-52125af6e0d4/.gitconfig'
-2026-11-07T19:58:28.5483480Z Temporarily overriding HOME='/Users/runner/work/_temp/f860c700-1785-4235-a950-52125af6e0d4' before making global git config changes
-2026-11-07T19:58:28.5484230Z Adding repository directory to the temporary git global config as a safe directory
-2026-11-07T19:58:28.5484990Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/ios-photo-vault/ios-photo-vault
-2026-11-07T19:58:28.5730060Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
-2026-11-07T19:58:28.5803100Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2026-11-07T19:58:28.9028770Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-11-07T19:58:28.9130880Z http.https://github.com/.extraheader
-2026-11-07T19:58:28.9441910Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
-2026-11-07T19:58:28.9751810Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2026-11-07T19:58:29.1504250Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
-2026-11-07T19:58:29.1614290Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2026-11-07T19:58:29.4084410Z Cleaning up orphan processes
-2026-11-07T19:58:29.5522410Z Terminate orphan process: pid (3494) (ibtoold)
-2026-11-07T19:58:29.6986230Z Terminate orphan process: pid (3464) (ibtoold)
-2026-11-07T19:58:30.8791650Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+﻿2026-11-07T20:23:28.0604470Z Current runner version: '2.338.2'
+2026-11-07T20:23:28.0616470Z ##[group]Runner Image Provisioner
+2026-11-07T20:23:28.0617210Z Hosted Compute Agent
+2026-11-07T20:23:28.0617660Z Version: 20261028.624
+2026-11-07T20:23:28.0618220Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-07T20:23:28.0618690Z Build Date: 2026-10-28T21:51:42Z
+2026-11-07T20:23:28.0619090Z Worker ID: {ca7af212-99e7-43fc-9dd8-96e14435221b}
+2026-11-07T20:23:28.0619490Z Region: westus
+2026-11-07T20:23:28.0619810Z Cloud: MacCloud
+2026-11-07T20:23:28.0620120Z ##[endgroup]
+2026-11-07T20:23:28.0620830Z ##[group]Operating System
+2026-11-07T20:23:28.0621160Z macOS
+2026-11-07T20:23:28.0621500Z 26.7.2
+2026-11-07T20:23:28.0621780Z 25G332
+2026-11-07T20:23:28.0622080Z ##[endgroup]
+2026-11-07T20:23:28.0622400Z ##[group]Runner Image
+2026-11-07T20:23:28.0622730Z Image: macos-26-arm64
+2026-11-07T20:23:28.0651170Z Version: 20261102.0473.1
+2026-11-07T20:23:28.0651990Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261102.0473/images/macos/macos-26-arm64-Readme.md
+2026-11-07T20:23:28.0652860Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261102.0473
+2026-11-07T20:23:28.0653420Z ##[endgroup]
+2026-11-07T20:23:28.0653990Z ##[group]GITHUB_TOKEN Permissions
+2026-11-07T20:23:28.0654840Z Contents: write
+2026-11-07T20:23:28.0655140Z Metadata: read
+2026-11-07T20:23:28.0655420Z ##[endgroup]
+2026-11-07T20:23:28.0656450Z Secret source: Actions
+2026-11-07T20:23:28.0656900Z Cache mode: write
+2026-11-07T20:23:28.0657260Z Prepare workflow directory
+2026-11-07T20:23:28.0831440Z Prepare all required actions
+2026-11-07T20:23:28.0860380Z Getting action download info
+2026-11-07T20:23:28.3392950Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-07T20:23:28.5564130Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-07T20:23:28.7027570Z Complete job name: Build iOS IPA Binaries
+2026-11-07T20:23:28.7442940Z ##[group]Run actions/checkout@v4
+2026-11-07T20:23:28.7443390Z with:
+2026-11-07T20:23:28.7443670Z   repository: s02705193-wq/ios-photo-vault
+2026-11-07T20:23:28.7446160Z   token: ***
+2026-11-07T20:23:28.7446430Z   ssh-strict: true
+2026-11-07T20:23:28.7446710Z   ssh-user: git
+2026-11-07T20:23:28.7446980Z   persist-credentials: true
+2026-11-07T20:23:28.7447270Z   clean: true
+2026-11-07T20:23:28.7447550Z   sparse-checkout-cone-mode: true
+2026-11-07T20:23:28.7447870Z   fetch-depth: 1
+2026-11-07T20:23:28.7448170Z   fetch-tags: false
+2026-11-07T20:23:28.7448460Z   show-progress: true
+2026-11-07T20:23:28.7448760Z   lfs: false
+2026-11-07T20:23:28.7449040Z   submodules: false
+2026-11-07T20:23:28.7449340Z   set-safe-directory: true
+2026-11-07T20:23:28.7449680Z   allow-unsafe-pr-checkout: false
+2026-11-07T20:23:28.7450110Z ##[endgroup]
+2026-11-07T20:23:28.8645100Z Syncing repository: s02705193-wq/ios-photo-vault
+2026-11-07T20:23:28.8646130Z ##[group]Getting Git version info
+2026-11-07T20:23:28.8646760Z Working directory is '/Users/runner/work/ios-photo-vault/ios-photo-vault'
+2026-11-07T20:23:28.8647700Z [command]/opt/homebrew/bin/git version
+2026-11-07T20:23:28.9130080Z git version 2.56.0
+2026-11-07T20:23:28.9140050Z ##[endgroup]
+2026-11-07T20:23:28.9146990Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/49bf265c-6c5d-4df2-b472-040c9469eafa/.gitconfig'
+2026-11-07T20:23:28.9153610Z Temporarily overriding HOME='/Users/runner/work/_temp/49bf265c-6c5d-4df2-b472-040c9469eafa' before making global git config changes
+2026-11-07T20:23:28.9154540Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-07T20:23:28.9156610Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:28.9231550Z Deleting the contents of '/Users/runner/work/ios-photo-vault/ios-photo-vault'
+2026-11-07T20:23:28.9233920Z ##[group]Initializing the repository
+2026-11-07T20:23:28.9237120Z [command]/opt/homebrew/bin/git init /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:28.9377620Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-07T20:23:28.9378480Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-07T20:23:28.9379250Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-07T20:23:28.9379840Z hint: call:
+2026-11-07T20:23:28.9380180Z hint:
+2026-11-07T20:23:28.9380560Z hint: 	git config --global init.defaultBranch <name>
+2026-11-07T20:23:28.9381010Z hint:
+2026-11-07T20:23:28.9381560Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-07T20:23:28.9392110Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-07T20:23:28.9392630Z hint:
+2026-11-07T20:23:28.9393010Z hint: 	git branch -m <name>
+2026-11-07T20:23:28.9393400Z hint:
+2026-11-07T20:23:28.9393890Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-07T20:23:28.9394760Z Initialized empty Git repository in /Users/runner/work/ios-photo-vault/ios-photo-vault/.git/
+2026-11-07T20:23:28.9396070Z [command]/opt/homebrew/bin/git remote add origin https://github.com/s02705193-wq/ios-photo-vault
+2026-11-07T20:23:28.9444540Z ##[endgroup]
+2026-11-07T20:23:28.9445100Z ##[group]Disabling automatic garbage collection
+2026-11-07T20:23:28.9447060Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-11-07T20:23:28.9489620Z ##[endgroup]
+2026-11-07T20:23:28.9490090Z ##[group]Setting up auth
+2026-11-07T20:23:28.9493740Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-07T20:23:28.9537420Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-07T20:23:29.0174410Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-07T20:23:29.0217250Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-07T20:23:29.0806900Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-07T20:23:29.0867930Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-07T20:23:29.1897600Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-07T20:23:29.1899180Z ##[endgroup]
+2026-11-07T20:23:29.1899760Z ##[group]Fetching the repository
+2026-11-07T20:23:29.1900740Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3ab12f66695c706f87675770141ed03b5b6e7423:refs/remotes/origin/main
+2026-11-07T20:23:29.5839990Z From https://github.com/s02705193-wq/ios-photo-vault
+2026-11-07T20:23:29.5840790Z  * [new ref]         3ab12f66695c706f87675770141ed03b5b6e7423 -> origin/main
+2026-11-07T20:23:29.5842200Z ##[endgroup]
+2026-11-07T20:23:29.5842830Z ##[group]Determining the checkout info
+2026-11-07T20:23:29.5843640Z ##[endgroup]
+2026-11-07T20:23:29.5848690Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-11-07T20:23:29.5913020Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-07T20:23:29.5958960Z ##[group]Checking out the ref
+2026-11-07T20:23:29.5965650Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-11-07T20:23:29.6087500Z Switched to a new branch 'main'
+2026-11-07T20:23:29.6109070Z branch 'main' set up to track 'origin/main'.
+2026-11-07T20:23:29.6136100Z ##[endgroup]
+2026-11-07T20:23:29.6168520Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-11-07T20:23:29.6221120Z 3ab12f66695c706f87675770141ed03b5b6e7423
+2026-11-07T20:23:29.6351740Z ##[group]Run sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+2026-11-07T20:23:29.6352800Z [36;1msudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app[0m
+2026-11-07T20:23:29.6388040Z shell: /bin/bash -e {0}
+2026-11-07T20:23:29.6388390Z ##[endgroup]
+2026-11-07T20:23:29.6753320Z xcode-select: error: invalid developer directory '/Applications/Xcode_15.4.app'
+2026-11-07T20:23:29.6985390Z ##[group]Run brew install xcodegen
+2026-11-07T20:23:29.6985920Z [36;1mbrew install xcodegen[0m
+2026-11-07T20:23:29.7024600Z shell: /bin/bash -e {0}
+2026-11-07T20:23:29.7025040Z ##[endgroup]
+2026-11-07T20:23:31.8212080Z [32m==>[0m [1mDownloading bottle manifests[0m
+2026-11-07T20:23:31.8652820Z ✔︎ Bottle Manifest xcodegen (2.46.0)
+2026-11-07T20:23:31.8661660Z [32m==>[0m [1mFetching downloads for: [32mxcodegen[39m[0m
+2026-11-07T20:23:33.2038590Z ✔︎ Bottle xcodegen (2.46.0)
+2026-11-07T20:23:33.2227630Z [34m==>[0m [1mPouring xcodegen--2.46.0.arm64_tahoe.bottle.1.tar.gz[0m
+2026-11-07T20:23:33.6319060Z 🍺  /opt/homebrew/Cellar/xcodegen/2.46.0: 38 files, 7.4MB
+2026-11-07T20:23:33.6407020Z ##[group]Run xcodegen generate
+2026-11-07T20:23:33.6407250Z [36;1mxcodegen generate[0m
+2026-11-07T20:23:33.6434430Z shell: /bin/bash -e {0}
+2026-11-07T20:23:33.6434610Z ##[endgroup]
+2026-11-07T20:23:33.6722950Z ⚙️  Generating plists...
+2026-11-07T20:23:33.6731910Z ⚙️  Generating project...
+2026-11-07T20:23:33.6787670Z ⚙️  Writing project...
+2026-11-07T20:23:33.6827850Z Created project at /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:33.6865050Z ##[group]Run xcodebuild -project PhotoVaultSuite.xcodeproj \
+2026-11-07T20:23:33.6865620Z [36;1mxcodebuild -project PhotoVaultSuite.xcodeproj \[0m
+2026-11-07T20:23:33.6866070Z [36;1m           -scheme CalculatorVault \[0m
+2026-11-07T20:23:33.6866410Z [36;1m           -configuration Release \[0m
+2026-11-07T20:23:33.6866750Z [36;1m           -sdk iphoneos \[0m
+2026-11-07T20:23:33.6867080Z [36;1m           -derivedDataPath derived_data_calc \[0m
+2026-11-07T20:23:33.6867410Z [36;1m           CODE_SIGNING_ALLOWED=NO \[0m
+2026-11-07T20:23:33.6867710Z [36;1m           CODE_SIGNING_REQUIRED=NO \[0m
+2026-11-07T20:23:33.6868040Z [36;1m           CODE_SIGN_IDENTITY="" \[0m
+2026-11-07T20:23:33.6868380Z [36;1m           clean build[0m
+2026-11-07T20:23:33.6899470Z shell: /bin/bash -e {0}
+2026-11-07T20:23:33.6899720Z ##[endgroup]
+2026-11-07T20:23:34.6421070Z Command line invocation:
+2026-11-07T20:23:34.6428560Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild -project PhotoVaultSuite.xcodeproj -scheme CalculatorVault -configuration Release -sdk iphoneos -derivedDataPath derived_data_calc CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= clean build
+2026-11-07T20:23:34.6429710Z 
+2026-11-07T20:23:34.6429980Z Build settings from command line:
+2026-11-07T20:23:34.6430880Z     CODE_SIGN_IDENTITY = 
+2026-11-07T20:23:34.6432450Z     CODE_SIGNING_ALLOWED = NO
+2026-11-07T20:23:34.6433200Z     CODE_SIGNING_REQUIRED = NO
+2026-11-07T20:23:34.6433880Z     SDKROOT = iphoneos26.5
+2026-11-07T20:23:34.6434500Z 
+2026-11-07T20:23:36.4009250Z 2026-11-07 20:23:36.400 xcodebuild[3157:13737] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-07T20:23:36.4098860Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
+2026-11-07T20:23:36.4099620Z { platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
+2026-11-07T20:23:36.4100280Z { platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:2c959ad096283f8507d4667f530b9c2028eaa150, name:My Mac }
+2026-11-07T20:23:36.4101150Z { platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
+2026-11-07T20:23:36.4214170Z note: Using codesigning identity override: 
+2026-11-07T20:23:37.0088600Z CreateBuildRequest
+2026-11-07T20:23:37.0089420Z 
+2026-11-07T20:23:37.0089710Z SendProjectDescription
+2026-11-07T20:23:37.0381960Z 
+2026-11-07T20:23:37.0382860Z CreateBuildOperation
+2026-11-07T20:23:37.0441370Z 
+2026-11-07T20:23:37.0705990Z ** CLEAN SUCCEEDED **
+2026-11-07T20:23:37.0706560Z 
+2026-11-07T20:23:37.0717740Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
+2026-11-07T20:23:37.0721400Z { platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
+2026-11-07T20:23:37.0722330Z { platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:2c959ad096283f8507d4667f530b9c2028eaa150, name:My Mac }
+2026-11-07T20:23:37.0724610Z { platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
+2026-11-07T20:23:37.0735200Z note: Using codesigning identity override: 
+2026-11-07T20:23:37.1267530Z ComputePackagePrebuildTargetDependencyGraph
+2026-11-07T20:23:37.1338560Z 
+2026-11-07T20:23:37.1350680Z Prepare packages
+2026-11-07T20:23:37.1351140Z 
+2026-11-07T20:23:37.1359440Z CreateBuildRequest
+2026-11-07T20:23:37.1360190Z 
+2026-11-07T20:23:37.1360660Z SendProjectDescription
+2026-11-07T20:23:37.1460400Z 
+2026-11-07T20:23:37.1460610Z CreateBuildOperation
+2026-11-07T20:23:37.1467810Z 
+2026-11-07T20:23:37.1474200Z ComputeTargetDependencyGraph
+2026-11-07T20:23:37.1571400Z note: Building targets in dependency order
+2026-11-07T20:23:37.1571870Z note: Target dependency graph (1 target)
+2026-11-07T20:23:37.1572350Z     Target 'CalculatorVault' in project 'PhotoVaultSuite' (no dependencies)
+2026-11-07T20:23:37.1575620Z 
+2026-11-07T20:23:37.1578150Z GatherProvisioningInputs
+2026-11-07T20:23:37.1579820Z 
+2026-11-07T20:23:37.1602740Z CreateBuildDescription
+2026-11-07T20:23:37.1726580Z 
+2026-11-07T20:23:37.1728450Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -x c -c /dev/null
+2026-11-07T20:23:37.4388370Z 
+2026-11-07T20:23:37.4389550Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets
+2026-11-07T20:23:39.0178080Z 
+2026-11-07T20:23:39.0180210Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+2026-11-07T20:23:39.0232820Z 
+2026-11-07T20:23:39.0251300Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+2026-11-07T20:23:39.5702370Z 
+2026-11-07T20:23:39.5773020Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+2026-11-07T20:23:39.7054220Z 
+2026-11-07T20:23:39.7181890Z Build description signature: 4d73351642adfe23f579c4a7c8b78fcf
+2026-11-07T20:23:39.7184080Z Build description path: /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/XCBuildData/4d73351642adfe23f579c4a7c8b78fcf.xcbuilddata
+2026-11-07T20:23:39.7416010Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products
+2026-11-07T20:23:39.7517500Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:39.7543240Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products
+2026-11-07T20:23:39.7546620Z 
+2026-11-07T20:23:39.7548590Z ClangStatCache /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache
+2026-11-07T20:23:39.7551390Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:39.7553110Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -o /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache
+2026-11-07T20:23:43.6638900Z 
+2026-11-07T20:23:43.6640780Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex
+2026-11-07T20:23:43.6641850Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:43.6642580Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex
+2026-11-07T20:23:43.6642980Z 
+2026-11-07T20:23:43.6643270Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos
+2026-11-07T20:23:43.6643880Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:43.6644530Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos
+2026-11-07T20:23:43.6645050Z 
+2026-11-07T20:23:43.6646010Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+2026-11-07T20:23:43.6646790Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:43.6647910Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+2026-11-07T20:23:43.6648430Z 
+2026-11-07T20:23:43.6648850Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/ExplicitPrecompiledModules
+2026-11-07T20:23:43.6649470Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:43.6650240Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/ExplicitPrecompiledModules
+2026-11-07T20:23:43.6650710Z 
+2026-11-07T20:23:43.6651550Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/PhotoVaultSuite-9fff68fc15aabb367d719e1372990f71-VFS-iphoneos/all-product-headers.yaml
+2026-11-07T20:23:43.6652510Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:43.6653410Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/PhotoVaultSuite-9fff68fc15aabb367d719e1372990f71-VFS-iphoneos/all-product-headers.yaml
+2026-11-07T20:23:43.6654120Z 
+2026-11-07T20:23:43.6654500Z CreateBuildDirectory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+2026-11-07T20:23:43.6655110Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault/PhotoVaultSuite.xcodeproj
+2026-11-07T20:23:43.6655750Z     builtin-create-build-directory /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+2026-11-07T20:23:43.6656440Z 
+2026-11-07T20:23:43.6657200Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6658860Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6659590Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftFileList
+2026-11-07T20:23:43.6660650Z 
+2026-11-07T20:23:43.6661550Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6662740Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6663850Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json
+2026-11-07T20:23:43.6664700Z 
+2026-11-07T20:23:43.6665540Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftConstValuesFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6666750Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6667970Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftConstValuesFileList
+2026-11-07T20:23:43.6669120Z 
+2026-11-07T20:23:43.6672050Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.LinkFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6673330Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6674190Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.LinkFileList
+2026-11-07T20:23:43.6674880Z 
+2026-11-07T20:23:43.6675690Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-OutputFileMap.json (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6677260Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6678540Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-OutputFileMap.json
+2026-11-07T20:23:43.6679300Z 
+2026-11-07T20:23:43.6680160Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6681130Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6681850Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.hmap
+2026-11-07T20:23:43.6682440Z 
+2026-11-07T20:23:43.6683290Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyStaticMetadataFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6684830Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6685790Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyStaticMetadataFileList
+2026-11-07T20:23:43.6686480Z 
+2026-11-07T20:23:43.6687330Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyMetadataFileList (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6688340Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6689180Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault.DependencyMetadataFileList
+2026-11-07T20:23:43.6690060Z 
+2026-11-07T20:23:43.6690860Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6691770Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6692790Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap
+2026-11-07T20:23:43.6693540Z 
+2026-11-07T20:23:43.6694300Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6695400Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6696210Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap
+2026-11-07T20:23:43.6696900Z 
+2026-11-07T20:23:43.6697890Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6698910Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6699760Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap
+2026-11-07T20:23:43.6700550Z 
+2026-11-07T20:23:43.6701470Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6702470Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6703350Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap
+2026-11-07T20:23:43.6704000Z 
+2026-11-07T20:23:43.6704830Z WriteAuxiliaryFile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-non-framework-target-headers.hmap (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6705830Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6706780Z     write-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-non-framework-target-headers.hmap
+2026-11-07T20:23:43.6708020Z 
+2026-11-07T20:23:43.6708550Z MkDir /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6709210Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6709810Z     /bin/mkdir -p /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app
+2026-11-07T20:23:43.6710270Z 
+2026-11-07T20:23:43.6711030Z MkDir /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/unthinned (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6719800Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6721180Z     /bin/mkdir -p /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/unthinned
+2026-11-07T20:23:43.6721970Z 
+2026-11-07T20:23:43.6723310Z MkDir /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/thinned (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6724230Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6724980Z     /bin/mkdir -p /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/thinned
+2026-11-07T20:23:43.6725680Z 
+2026-11-07T20:23:43.6726110Z GenerateAssetSymbols /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6727580Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6735990Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets --compile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 15.0 --platform iphoneos --bundle-identifier com.utility.calculator --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+2026-11-07T20:23:43.6742750Z /* com.apple.actool.compilation-results */
+2026-11-07T20:23:43.6743640Z /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+2026-11-07T20:23:43.6744920Z /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.h
+2026-11-07T20:23:43.6746220Z /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.swift
+2026-11-07T20:23:43.6746960Z 
+2026-11-07T20:23:43.6746970Z 
+2026-11-07T20:23:43.6747990Z CompileAssetCatalogVariant thinned /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:43.6749210Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:43.6753250Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/Assets.xcassets --compile /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 15.0 --platform iphoneos
+2026-11-07T20:23:49.4023300Z 
+2026-11-07T20:23:49.4025370Z SwiftDriver CalculatorVault normal arm64 com.apple.xcode.tools.swift.compiler (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:49.4026190Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:49.4041110Z     builtin-SwiftDriver -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name CalculatorVault -O -whole-module-optimization @/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios15.0 -g -module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -F /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -c -num-threads 5 -Xcc -ivfsstatcache -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache -output-file-map /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -sdk-module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-Swift.h -working-directory /Users/runner/work/ios-photo-vault/ios-photo-vault -no-emit-module-separately-wmo
+2026-11-07T20:23:49.4058000Z 
+2026-11-07T20:23:49.4058410Z SwiftDriver\ Compilation CalculatorVault normal arm64 com.apple.xcode.tools.swift.compiler (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:49.4059060Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:49.4075180Z     builtin-Swift-Compilation -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name CalculatorVault -O -whole-module-optimization @/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios15.0 -g -module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -F /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -c -num-threads 5 -Xcc -ivfsstatcache -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache -output-file-map /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -sdk-module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-Swift.h -working-directory /Users/runner/work/ios-photo-vault/ios-photo-vault -no-emit-module-separately-wmo
+2026-11-07T20:23:49.4089540Z 
+2026-11-07T20:23:49.4089980Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ptrcheck-6HR584I8GMZBSIFJ7LZ0LFSH5.pcm
+2026-11-07T20:23:49.4090770Z 
+2026-11-07T20:23:49.4091380Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdarg-4C6FWM0BM20M7D7TTQ8UNAW93.pcm
+2026-11-07T20:23:49.4093380Z 
+2026-11-07T20:23:49.4093880Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftShims-7FCZT77T0SA7JFVMPJ337WNTF.pcm
+2026-11-07T20:23:49.4094420Z 
+2026-11-07T20:23:49.4094920Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdbool-8W19F1ALF0RQX8MDZL3F4HAQG.pcm
+2026-11-07T20:23:49.4095590Z 
+2026-11-07T20:23:49.4096220Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_SwiftConcurrencyShims-21ZBZ01VP0GII9GHO3GW2067L.pcm
+2026-11-07T20:23:49.4096920Z 
+2026-11-07T20:23:49.4097560Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stddef-67IEWJ78660PU209SLBV1CBSW.pcm
+2026-11-07T20:23:49.4098240Z 
+2026-11-07T20:23:49.4106830Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ptrauth-A2566LV9GB2FX6ZWCQG1OAICN.pcm
+2026-11-07T20:23:49.4109410Z 
+2026-11-07T20:23:49.4109950Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/DeveloperToolsSupport-Q9HDAKXG75HEMLG9GV55TKY8.pcm
+2026-11-07T20:23:49.4110600Z 
+2026-11-07T20:23:49.4111200Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_float-20P262KGUN1V8CAI0D2LVN6CJ.pcm
+2026-11-07T20:23:49.4112040Z 
+2026-11-07T20:23:49.4112790Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_AvailabilityInternal-9D4STOJ8WDIQXN0OAENRIUOS0.pcm
+2026-11-07T20:23:49.4113440Z 
+2026-11-07T20:23:49.4114150Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation1-9PBGCUSTVGRHY4CRJC2YISY0Z.pcm
+2026-11-07T20:23:49.4114850Z 
+2026-11-07T20:23:49.4115490Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ExtensionFoundation-2TULWQIALKXD6D3480S6ZPXCU.pcm
+2026-11-07T20:23:49.4116240Z 
+2026-11-07T20:23:49.4116780Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation2-67FIBLZQKPJEGL7MV1421KXPF.pcm
+2026-11-07T20:23:49.4117380Z 
+2026-11-07T20:23:49.4117880Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_limits-77XHCTDTQJ2DL8OXPURJP1AFD.pcm
+2026-11-07T20:23:49.4118410Z 
+2026-11-07T20:23:49.4118850Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/sys_types-DSZ6HLMHZ07OAIAUE77LTDFIX.pcm
+2026-11-07T20:23:49.4119560Z 
+2026-11-07T20:23:49.4120140Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_tgmath-6Q5NGE3H9ZPV87FMF1B9WA9S1.pcm
+2026-11-07T20:23:49.4120710Z 
+2026-11-07T20:23:49.4121140Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdint-DE2AA3PPXJYBO12AO8Z0N00X9.pcm
+2026-11-07T20:23:49.4121850Z 
+2026-11-07T20:23:49.4122310Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdatomic-5741XO7YXHX5422HYBWK1DLBZ.pcm
+2026-11-07T20:23:49.4122860Z 
+2026-11-07T20:23:49.4123320Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation3-6V465CN86MRD9BM1D706L0EN7.pcm
+2026-11-07T20:23:49.4123860Z 
+2026-11-07T20:23:49.4124320Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_intrinsics-6IO8LAVTXPJI31BV93EMX89ML.pcm
+2026-11-07T20:23:49.4124860Z 
+2026-11-07T20:23:49.4125310Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_inttypes-88LBY8AETD77ASAEJ7DOTZ7LJ.pcm
+2026-11-07T20:23:49.4125840Z 
+2026-11-07T20:23:49.4126280Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Darwin-6IASDTGP9GNEGW80RN3NKJHP4.pcm
+2026-11-07T20:23:49.4126930Z 
+2026-11-07T20:23:49.4127430Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/simd-2S3SE4CEVIC0NBR9P1KNS740.pcm
+2026-11-07T20:23:49.4127970Z 
+2026-11-07T20:23:49.4128410Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ObjectiveC-DNB2JZAOD55N5MVAL7PJL8DZ.pcm
+2026-11-07T20:23:49.4129140Z 
+2026-11-07T20:23:49.4129570Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/MachO-5A0DSPM7HRWCRL6VNQDBIZWST.pcm
+2026-11-07T20:23:49.4130110Z 
+2026-11-07T20:23:49.4130540Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os_object-8SYXB1YQGF9RRLJ1C8FH6JHNB.pcm
+2026-11-07T20:23:49.4131130Z 
+2026-11-07T20:23:49.4131610Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os_workgroup-1DP9L6DLOZTJN0J6Q6L5EF7P1.pcm
+2026-11-07T20:23:49.4132110Z 
+2026-11-07T20:23:49.4132550Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Spatial-EBYMJF6CUTPFYOBFEK8JFUAEO.pcm
+2026-11-07T20:23:49.4133060Z 
+2026-11-07T20:23:49.4137210Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Dispatch-86WG6T2PSMW0GCXWMSECR7PQB.pcm
+2026-11-07T20:23:49.4137950Z 
+2026-11-07T20:23:49.4138600Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreFoundation-A4XFR6T6TSXR9BU2APSEI6T0Q.pcm
+2026-11-07T20:23:49.4139330Z 
+2026-11-07T20:23:49.4139960Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/XPC-6AJCYBH3M7VHXWI3Z5TNVWECG.pcm
+2026-11-07T20:23:49.4140960Z 
+2026-11-07T20:23:49.4142040Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/dnssd-9231393U2I3CEA9XJNZ5OP1WO.pcm
+2026-11-07T20:23:49.4149570Z 
+2026-11-07T20:23:49.4150120Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os-5LIBB0X1SAVWEO45FQGH76BI2.pcm
+2026-11-07T20:23:49.4150800Z 
+2026-11-07T20:23:49.4151360Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CFNetwork-36K7A9WGXU6AWG2EV3JMCOYQI.pcm
+2026-11-07T20:23:49.4152010Z 
+2026-11-07T20:23:49.4152440Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreAudioTypes-6W281H0KR1J25YAYELHDOUM91.pcm
+2026-11-07T20:23:49.4153650Z 
+2026-11-07T20:23:49.4154180Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Security-ATQ2OCIFJ7SSJP0VZPJ64JNTE.pcm
+2026-11-07T20:23:49.4154710Z 
+2026-11-07T20:23:49.4155140Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreGraphics-DUVQKMNIJFBP5YBZPIDCUH92I.pcm
+2026-11-07T20:23:49.4155670Z 
+2026-11-07T20:23:49.4156130Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreAudio-C2YIUG9HLFBR7C3UYNIP8TK5Z.pcm
+2026-11-07T20:23:49.4156630Z 
+2026-11-07T20:23:49.4157110Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Foundation-EQRQUIMOAWU1E9YSVAODFGVJC.pcm
+2026-11-07T20:23:49.4157690Z 
+2026-11-07T20:23:49.4158100Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreText-9XGZ91ZUMOL1VFSI8R2I2FC8O.pcm
+2026-11-07T20:23:49.4158710Z 
+2026-11-07T20:23:49.4159110Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ImageIO-X4R8OF8LE60KZN7O7RJJI4VO.pcm
+2026-11-07T20:23:49.4159710Z 
+2026-11-07T20:23:49.4160330Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreData-5IBJQP1CFRTZCY2ENUJRQGTG5.pcm
+2026-11-07T20:23:49.4160830Z 
+2026-11-07T20:23:49.4161250Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UIUtilities-8FRQA04Y8B0BAUKDGXXF8MQ8W.pcm
+2026-11-07T20:23:49.4161750Z 
+2026-11-07T20:23:49.4162160Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Symbols-5DHJBCWW68BTO4T7QZ07H6B5D.pcm
+2026-11-07T20:23:49.4162640Z 
+2026-11-07T20:23:49.4163060Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/FileProvider-WBUHI7IL72AZ2KS2365C5EUE.pcm
+2026-11-07T20:23:49.4163560Z 
+2026-11-07T20:23:49.4163990Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/DataDetection-ES1WPIDTV0KJLIDTIOTCYEIMX.pcm
+2026-11-07T20:23:49.4164480Z 
+2026-11-07T20:23:49.4164870Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/OSLog-16D9NSPM2ZCPBN1OEHJ6EDDWY.pcm
+2026-11-07T20:23:49.4165360Z 
+2026-11-07T20:23:49.4165820Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_LocationEssentials-4C3BYS1MIANC4F01HCJ5ER9CM.pcm
+2026-11-07T20:23:49.4166430Z 
+2026-11-07T20:23:49.4166870Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UniformTypeIdentifiers-5JBSP2ZMRK7WD0961F57ZIAFE.pcm
+2026-11-07T20:23:49.4167390Z 
+2026-11-07T20:23:49.4167790Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Network-7MDRE27MB0XVGW9YAK0JUBIVG.pcm
+2026-11-07T20:23:49.4168260Z 
+2026-11-07T20:23:49.4168690Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreTransferable-E0KN192G8E8OQEERKWROG7LZC.pcm
+2026-11-07T20:23:49.4169180Z 
+2026-11-07T20:23:49.4169590Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Accessibility-CNULF27S5H0OMLPYJA76VT9WM.pcm
+2026-11-07T20:23:49.4170070Z 
+2026-11-07T20:23:49.4170470Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreLocation-BY6K10G6UN8VR2F99R54VV2XL.pcm
+2026-11-07T20:23:49.4171160Z 
+2026-11-07T20:23:49.4171590Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreMIDI-B7HA1Z3LU850ULBCAI13Y9PA2.pcm
+2026-11-07T20:23:49.4172060Z 
+2026-11-07T20:23:49.4172480Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UserNotifications-C48LT1OAWOUPZ0RBI5BEIAB73.pcm
+2026-11-07T20:23:49.4173030Z 
+2026-11-07T20:23:49.4173530Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/IOSurface-5GG7X2CXAAFJS5VWSTTDO8SJ9.pcm
+2026-11-07T20:23:49.4174090Z 
+2026-11-07T20:23:49.4174620Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVRouting-4OOSGAD0SRIUKXBCK7745ZEUM.pcm
+2026-11-07T20:23:49.4175260Z 
+2026-11-07T20:23:49.4175710Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/OpenGLES-2QLZPN95M9HX4SPBZMFWPGU88.pcm
+2026-11-07T20:23:49.4176280Z 
+2026-11-07T20:23:49.4176770Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Metal-33AGAT8U5IJ30TQY4EEODKCVB.pcm
+2026-11-07T20:23:49.4177340Z 
+2026-11-07T20:23:49.4178020Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AudioToolbox-7QVBIBZTYW55M5F688HCXPUYK.pcm
+2026-11-07T20:23:49.4178570Z 
+2026-11-07T20:23:49.4179020Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreVideo-BADPFYV7GDPDG4QFBH66A8MS0.pcm
+2026-11-07T20:23:49.4179620Z 
+2026-11-07T20:23:49.4180050Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreMedia-6GJELHNYKGCP3MSYDR21UNUO8.pcm
+2026-11-07T20:23:49.4180680Z 
+2026-11-07T20:23:49.4181090Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreImage-56LKGAPGXSCH5XY5X046GQWO1.pcm
+2026-11-07T20:23:49.4181590Z 
+2026-11-07T20:23:49.4182010Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/QuartzCore-3WGZSES2QTZ2R69Z1UT4P3SYE.pcm
+2026-11-07T20:23:49.4182540Z 
+2026-11-07T20:23:49.4182990Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftUICore-63W803BS7ZNRO4YZSZP8MN9IJ.pcm
+2026-11-07T20:23:49.4183530Z 
+2026-11-07T20:23:49.4183970Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVFAudio-2RHEIY3JJ19Q0C2PF6UKS1O1E.pcm
+2026-11-07T20:23:49.4184480Z 
+2026-11-07T20:23:49.4184880Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/MediaToolbox-4M1272273SON22H7850XIDVKX.pcm
+2026-11-07T20:23:49.4185380Z 
+2026-11-07T20:23:49.4185920Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UIKit-OZ4Y63ZKJXXR5YOJ0SNZ59YX.pcm
+2026-11-07T20:23:49.4186400Z 
+2026-11-07T20:23:49.4186840Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVFoundation-A83GR6MXCFMMJBVQU0VVDS6JV.pcm
+2026-11-07T20:23:49.4187320Z 
+2026-11-07T20:23:49.4187710Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Photos-8ZPK0DUWB1KIB75YKTE7SG9FN.pcm
+2026-11-07T20:23:49.4188170Z 
+2026-11-07T20:23:49.4188750Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftUI-AKJSGS7JWCP8BH8A46OG6QA10.pcm
+2026-11-07T20:23:49.4189260Z 
+2026-11-07T20:23:49.4258930Z SwiftCompile normal arm64 Compiling\ CalculatorVaultApp.swift,\ ContentView.swift,\ VaultEngine.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/CalculatorVaultApp.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/ContentView.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/VaultEngine.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.swift /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUICore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/os.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/System.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/FileProvider.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation1.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreAudio.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreImage.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreMedia.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Symbols.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Foundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DeveloperToolsSupport.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Synchronization.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreVideo.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AVFAudio.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/simd.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Observation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreText.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ObjectiveC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/LightweightCodeRequirements.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/XPC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Darwin.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Concurrency.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AVFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AudioToolbox.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation2.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreTransferable.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/QuartzCore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ExtensionFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreLocation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Network.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreGraphics.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UniformTypeIdentifiers.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/OSLog.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Accessibility.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Spatial.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DataDetection.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Builtin_float.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UIKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_StringProcessing.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation3.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Swift.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Metal.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Distributed.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Dispatch.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Photos.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreMIDI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreData.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Combine.swiftmodule/arm64e-apple-ios.swiftmodule /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stddef-67IEWJ78660PU209SLBV1CBSW.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreVideo-BADPFYV7GDPDG4QFBH66A8MS0.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/IOSurface-5GG7X2CXAAFJS5VWSTTDO8SJ9.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os_object-8SYXB1YQGF9RRLJ1C8FH6JHNB.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_limits-77XHCTDTQJ2DL8OXPURJP1AFD.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreLocation-BY6K10G6UN8VR2F99R54VV2XL.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ptrauth-A2566LV9GB2FX6ZWCQG1OAICN.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Network-7MDRE27MB0XVGW9YAK0JUBIVG.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_inttypes-88LBY8AETD77ASAEJ7DOTZ7LJ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UIKit-OZ4Y63ZKJXXR5YOJ0SNZ59YX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreTransferable-E0KN192G8E8OQEERKWROG7LZC.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Foundation-EQRQUIMOAWU1E9YSVAODFGVJC.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Photos-8ZPK0DUWB1KIB75YKTE7SG9FN.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftUICore-63W803BS7ZNRO4YZSZP8MN9IJ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Metal-33AGAT8U5IJ30TQY4EEODKCVB.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreAudioTypes-6W281H0KR1J25YAYELHDOUM91.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/simd-2S3SE4CEVIC0NBR9P1KNS740.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/DeveloperToolsSupport-Q9HDAKXG75HEMLG9GV55TKY8.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdbool-8W19F1ALF0RQX8MDZL3F4HAQG.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os_workgroup-1DP9L6DLOZTJN0J6Q6L5EF7P1.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/sys_types-DSZ6HLMHZ07OAIAUE77LTDFIX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/FileProvider-WBUHI7IL72AZ2KS2365C5EUE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ptrcheck-6HR584I8GMZBSIFJ7LZ0LFSH5.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os-5LIBB0X1SAVWEO45FQGH76BI2.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreImage-56LKGAPGXSCH5XY5X046GQWO1.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/MachO-5A0DSPM7HRWCRL6VNQDBIZWST.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UniformTypeIdentifiers-5JBSP2ZMRK7WD0961F57ZIAFE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CFNetwork-36K7A9WGXU6AWG2EV3JMCOYQI.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdatomic-5741XO7YXHX5422HYBWK1DLBZ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/DataDetection-ES1WPIDTV0KJLIDTIOTCYEIMX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreData-5IBJQP1CFRTZCY2ENUJRQGTG5.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ExtensionFoundation-2TULWQIALKXD6D3480S6ZPXCU.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ImageIO-X4R8OF8LE60KZN7O7RJJI4VO.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation2-67FIBLZQKPJEGL7MV1421KXPF.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreMedia-6GJELHNYKGCP3MSYDR21UNUO8.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_intrinsics-6IO8LAVTXPJI31BV93EMX89ML.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/MediaToolbox-4M1272273SON22H7850XIDVKX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreText-9XGZ91ZUMOL1VFSI8R2I2FC8O.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Darwin-6IASDTGP9GNEGW80RN3NKJHP4.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftUI-AKJSGS7JWCP8BH8A46OG6QA10.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/QuartzCore-3WGZSES2QTZ2R69Z1UT4P3SYE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/OSLog-16D9NSPM2ZCPBN1OEHJ6EDDWY.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVFoundation-A83GR6MXCFMMJBVQU0VVDS6JV.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Spatial-EBYMJF6CUTPFYOBFEK8JFUAEO.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Dispatch-86WG6T2PSMW0GCXWMSECR7PQB.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UIUtilities-8FRQA04Y8B0BAUKDGXXF8MQ8W.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftShims-7FCZT77T0SA7JFVMPJ337WNTF.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_tgmath-6Q5NGE3H9ZPV87FMF1B9WA9S1.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_LocationEssentials-4C3BYS1MIANC4F01HCJ5ER9CM.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_SwiftConcurrencyShims-21ZBZ01VP0GII9GHO3GW2067L.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreAudio-C2YIUG9HLFBR7C3UYNIP8TK5Z.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Symbols-5DHJBCWW68BTO4T7QZ07H6B5D.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVFAudio-2RHEIY3JJ19Q0C2PF6UKS1O1E.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Accessibility-CNULF27S5H0OMLPYJA76VT9WM.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation1-9PBGCUSTVGRHY4CRJC2YISY0Z.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/OpenGLES-2QLZPN95M9HX4SPBZMFWPGU88.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ObjectiveC-DNB2JZAOD55N5MVAL7PJL8DZ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdarg-4C6FWM0BM20M7D7TTQ8UNAW93.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/XPC-6AJCYBH3M7VHXWI3Z5TNVWECG.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UserNotifications-C48LT1OAWOUPZ0RBI5BEIAB73.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdint-DE2AA3PPXJYBO12AO8Z0N00X9.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreGraphics-DUVQKMNIJFBP5YBZPIDCUH92I.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation3-6V465CN86MRD9BM1D706L0EN7.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreMIDI-B7HA1Z3LU850ULBCAI13Y9PA2.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/dnssd-9231393U2I3CEA9XJNZ5OP1WO.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Security-ATQ2OCIFJ7SSJP0VZPJ64JNTE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVRouting-4OOSGAD0SRIUKXBCK7745ZEUM.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_AvailabilityInternal-9D4STOJ8WDIQXN0OAENRIUOS0.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AudioToolbox-7QVBIBZTYW55M5F688HCXPUYK.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_float-20P262KGUN1V8CAI0D2LVN6CJ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreFoundation-A4XFR6T6TSXR9BU2APSEI6T0Q.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-dependencies-1.json (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:49.4318390Z Failed frontend command:
+2026-11-07T20:23:49.4341090Z /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/CalculatorVaultApp.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/ContentView.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/VaultEngine.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.swift -supplementary-output-file-map /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/supplementaryOutputs-1 -target arm64-apple-ios15.0 -module-can-import-version DeveloperToolsSupport 23.40.26 23.40.26 -module-can-import-version SwiftUI 7.5.3 7.5.3 -module-can-import-version UIKit 9126.5.5.2 9126.5.5 -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-dependencies-1.json -debug-module-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault.swiftmodule -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -I /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -F /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -O -serialize-debugging-options -const-gather-protocols-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault -file-compilation-dir /Users/runner/work/ios-photo-vault/ios-photo-vault -Xcc -ivfsstatcache -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-generated-files.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-own-target-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/CalculatorVault-project-headers.hmap -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources -no-auto-bridging-header-chaining -module-name CalculatorVault -frontend-parseable-output -disable-clang-spi -clang-target arm64-apple-ios26.5 -target-sdk-version 26.5 -target-sdk-name iphoneos26.5 -in-process-plugin-server-path /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -enable-default-cmo -num-threads 5 -o /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVaultApp.o -o /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/ContentView.o -o /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/VaultEngine.o -o /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/GeneratedAssetSymbols.o -index-unit-output-path /PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVaultApp.o -index-unit-output-path /PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/ContentView.o -index-unit-output-path /PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/VaultEngine.o -index-unit-output-path /PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/GeneratedAssetSymbols.o
+2026-11-07T20:23:49.4364640Z 
+2026-11-07T20:23:49.4364850Z CompileSwift normal arm64 (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:49.4365200Z     cd /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:49.4365410Z     
+2026-11-07T20:23:49.4365820Z /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/ContentView.swift:379:22: error: cannot find 'PHPhotoLibrary' in scope
+2026-11-07T20:23:49.4366370Z         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+2026-11-07T20:23:49.4366630Z                      ^~~~~~~~~~~~~~
+2026-11-07T20:23:49.4367130Z /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/ContentView.swift:379:63: error: cannot infer contextual base in reference to member 'readWrite'
+2026-11-07T20:23:49.4367720Z         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+2026-11-07T20:23:49.4368030Z                                                              ~^~~~~~~~~
+2026-11-07T20:23:49.4368190Z 
+2026-11-07T20:23:49.4368520Z ** BUILD FAILED **
+2026-11-07T20:23:49.4368620Z 
+2026-11-07T20:23:49.4368630Z 
+2026-11-07T20:23:49.4368720Z The following build commands failed:
+2026-11-07T20:23:49.4424290Z 	SwiftCompile normal arm64 Compiling\ CalculatorVaultApp.swift,\ ContentView.swift,\ VaultEngine.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/CalculatorVaultApp.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/ContentView.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/ios_calculator_target/VaultEngine.swift /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/DerivedSources/GeneratedAssetSymbols.swift /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUICore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/os.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/System.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/FileProvider.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation1.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreAudio.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreImage.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreMedia.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Symbols.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Foundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DeveloperToolsSupport.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Synchronization.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreVideo.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AVFAudio.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/simd.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Observation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreText.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ObjectiveC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/LightweightCodeRequirements.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/XPC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Darwin.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Concurrency.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AVFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AudioToolbox.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation2.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreTransferable.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/QuartzCore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ExtensionFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreLocation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Network.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreGraphics.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UniformTypeIdentifiers.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/OSLog.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Accessibility.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Spatial.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DataDetection.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Builtin_float.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UIKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_StringProcessing.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation3.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Swift.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Metal.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Distributed.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Dispatch.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Photos.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreMIDI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreData.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Combine.swiftmodule/arm64e-apple-ios.swiftmodule /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stddef-67IEWJ78660PU209SLBV1CBSW.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreVideo-BADPFYV7GDPDG4QFBH66A8MS0.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/IOSurface-5GG7X2CXAAFJS5VWSTTDO8SJ9.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os_object-8SYXB1YQGF9RRLJ1C8FH6JHNB.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_limits-77XHCTDTQJ2DL8OXPURJP1AFD.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreLocation-BY6K10G6UN8VR2F99R54VV2XL.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ptrauth-A2566LV9GB2FX6ZWCQG1OAICN.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Network-7MDRE27MB0XVGW9YAK0JUBIVG.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_inttypes-88LBY8AETD77ASAEJ7DOTZ7LJ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UIKit-OZ4Y63ZKJXXR5YOJ0SNZ59YX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreTransferable-E0KN192G8E8OQEERKWROG7LZC.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Foundation-EQRQUIMOAWU1E9YSVAODFGVJC.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Photos-8ZPK0DUWB1KIB75YKTE7SG9FN.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftUICore-63W803BS7ZNRO4YZSZP8MN9IJ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Metal-33AGAT8U5IJ30TQY4EEODKCVB.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreAudioTypes-6W281H0KR1J25YAYELHDOUM91.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/simd-2S3SE4CEVIC0NBR9P1KNS740.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/DeveloperToolsSupport-Q9HDAKXG75HEMLG9GV55TKY8.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdbool-8W19F1ALF0RQX8MDZL3F4HAQG.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os_workgroup-1DP9L6DLOZTJN0J6Q6L5EF7P1.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/sys_types-DSZ6HLMHZ07OAIAUE77LTDFIX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/FileProvider-WBUHI7IL72AZ2KS2365C5EUE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ptrcheck-6HR584I8GMZBSIFJ7LZ0LFSH5.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/os-5LIBB0X1SAVWEO45FQGH76BI2.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreImage-56LKGAPGXSCH5XY5X046GQWO1.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/MachO-5A0DSPM7HRWCRL6VNQDBIZWST.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UniformTypeIdentifiers-5JBSP2ZMRK7WD0961F57ZIAFE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CFNetwork-36K7A9WGXU6AWG2EV3JMCOYQI.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdatomic-5741XO7YXHX5422HYBWK1DLBZ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/DataDetection-ES1WPIDTV0KJLIDTIOTCYEIMX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreData-5IBJQP1CFRTZCY2ENUJRQGTG5.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ExtensionFoundation-2TULWQIALKXD6D3480S6ZPXCU.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ImageIO-X4R8OF8LE60KZN7O7RJJI4VO.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation2-67FIBLZQKPJEGL7MV1421KXPF.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreMedia-6GJELHNYKGCP3MSYDR21UNUO8.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_intrinsics-6IO8LAVTXPJI31BV93EMX89ML.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/MediaToolbox-4M1272273SON22H7850XIDVKX.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreText-9XGZ91ZUMOL1VFSI8R2I2FC8O.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Darwin-6IASDTGP9GNEGW80RN3NKJHP4.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftUI-AKJSGS7JWCP8BH8A46OG6QA10.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/QuartzCore-3WGZSES2QTZ2R69Z1UT4P3SYE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/OSLog-16D9NSPM2ZCPBN1OEHJ6EDDWY.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVFoundation-A83GR6MXCFMMJBVQU0VVDS6JV.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Spatial-EBYMJF6CUTPFYOBFEK8JFUAEO.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Dispatch-86WG6T2PSMW0GCXWMSECR7PQB.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UIUtilities-8FRQA04Y8B0BAUKDGXXF8MQ8W.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/SwiftShims-7FCZT77T0SA7JFVMPJ337WNTF.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_tgmath-6Q5NGE3H9ZPV87FMF1B9WA9S1.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_LocationEssentials-4C3BYS1MIANC4F01HCJ5ER9CM.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_SwiftConcurrencyShims-21ZBZ01VP0GII9GHO3GW2067L.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreAudio-C2YIUG9HLFBR7C3UYNIP8TK5Z.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Symbols-5DHJBCWW68BTO4T7QZ07H6B5D.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVFAudio-2RHEIY3JJ19Q0C2PF6UKS1O1E.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Accessibility-CNULF27S5H0OMLPYJA76VT9WM.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation1-9PBGCUSTVGRHY4CRJC2YISY0Z.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/OpenGLES-2QLZPN95M9HX4SPBZMFWPGU88.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/ObjectiveC-DNB2JZAOD55N5MVAL7PJL8DZ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdarg-4C6FWM0BM20M7D7TTQ8UNAW93.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/XPC-6AJCYBH3M7VHXWI3Z5TNVWECG.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/UserNotifications-C48LT1OAWOUPZ0RBI5BEIAB73.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_stdint-DE2AA3PPXJYBO12AO8Z0N00X9.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreGraphics-DUVQKMNIJFBP5YBZPIDCUH92I.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_DarwinFoundation3-6V465CN86MRD9BM1D706L0EN7.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreMIDI-B7HA1Z3LU850ULBCAI13Y9PA2.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/dnssd-9231393U2I3CEA9XJNZ5OP1WO.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/Security-ATQ2OCIFJ7SSJP0VZPJ64JNTE.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AVRouting-4OOSGAD0SRIUKXBCK7745ZEUM.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_AvailabilityInternal-9D4STOJ8WDIQXN0OAENRIUOS0.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/AudioToolbox-7QVBIBZTYW55M5F688HCXPUYK.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/_Builtin_float-20P262KGUN1V8CAI0D2LVN6CJ.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/ModuleCache.noindex/CoreFoundation-A4XFR6T6TSXR9BU2APSEI6T0Q.pcm /Users/runner/work/ios-photo-vault/ios-photo-vault/derived_data_calc/Build/Intermediates.noindex/PhotoVaultSuite.build/Release-iphoneos/CalculatorVault.build/Objects-normal/arm64/CalculatorVault-dependencies-1.json (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:49.4480590Z 	CompileSwift normal arm64 (in target 'CalculatorVault' from project 'PhotoVaultSuite')
+2026-11-07T20:23:49.4481320Z 	Building project PhotoVaultSuite with scheme CalculatorVault and configuration Release
+2026-11-07T20:23:49.4481740Z (3 failures)
+2026-11-07T20:23:49.4492740Z ##[error]Process completed with exit code 65.
+2026-11-07T20:23:49.4639170Z Post job cleanup.
+2026-11-07T20:23:49.7461320Z [command]/opt/homebrew/bin/git version
+2026-11-07T20:23:49.8000720Z git version 2.56.0
+2026-11-07T20:23:49.8024080Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/438c71b6-6774-48c3-b5f0-29f85f045eff/.gitconfig'
+2026-11-07T20:23:49.8032550Z Temporarily overriding HOME='/Users/runner/work/_temp/438c71b6-6774-48c3-b5f0-29f85f045eff' before making global git config changes
+2026-11-07T20:23:49.8033850Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-07T20:23:49.8038410Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/ios-photo-vault/ios-photo-vault
+2026-11-07T20:23:49.8160360Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-07T20:23:49.8232130Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-07T20:23:49.9152560Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-07T20:23:49.9215940Z http.https://github.com/.extraheader
+2026-11-07T20:23:49.9223100Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-07T20:23:49.9294110Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-07T20:23:50.0152960Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-07T20:23:50.0215110Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-07T20:23:50.1320790Z Cleaning up orphan processes
+2026-11-07T20:23:50.2072350Z Terminate orphan process: pid (3204) (ibtoold)
+2026-11-07T20:23:50.2360880Z Terminate orphan process: pid (3192) (ibtoold)
+2026-11-07T20:23:50.7249420Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
