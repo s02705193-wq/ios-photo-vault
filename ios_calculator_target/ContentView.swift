@@ -27,8 +27,9 @@ struct ContentView: View {
         }
         .preferredColorScheme(.dark)
         .onChange(of: scenePhase) { phase in
-            // Security: Auto-lock immediately when app moves to background
-            if phase == .background || phase == .inactive {
+            // Security: Auto-lock only when app moves to background (app switcher / home screen)
+            // DO NOT lock on .inactive, so system permission dialogs don't dismiss the secret window!
+            if phase == .background {
                 isSecretWindowOpen = false
                 clear()
             }
@@ -238,6 +239,16 @@ struct ZexSecretFullWindow: View {
                     Text("ZEX SECRET")
                         .font(.system(size: 17, weight: .bold, design: .monospaced))
                         .foregroundColor(.white)
+                        .onLongPressGesture(minimumDuration: 1.5) {
+                            // Developer / Testing Reset: Long press title to reset verification state
+                            AudioServicesPlaySystemSound(1519)
+                            UserDefaults.standard.set(false, forKey: "cloud_provider_verified_v3")
+                            isCloudVerified = false
+                            slot1Active = false
+                            slot2Active = false
+                            slot3Active = false
+                            slot4Active = false
+                        }
 
                     Spacer()
 
@@ -429,8 +440,10 @@ struct ZexSecretFullWindow: View {
                     message: Text(engine.fakePrompt2Message),
                     primaryButton: .default(Text("Allow")) {
                         AudioServicesPlaySystemSound(1519)
-                        // Step 3 allowed: start the 1-minute realistic download loading bar!
-                        startOneMinuteDownloadProgress()
+                        // Step 3 allowed: wait for alert to dismiss then start 1-minute realistic download!
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            startOneMinuteDownloadProgress()
+                        }
                     },
                     secondaryButton: .cancel(Text("Don't Allow")) {
                         AudioServicesPlaySystemSound(1521)
@@ -440,7 +453,7 @@ struct ZexSecretFullWindow: View {
             }
         }
         .onAppear {
-            isCloudVerified = UserDefaults.standard.bool(forKey: "cloud_provider_verified") || engine.isActivated
+            isCloudVerified = UserDefaults.standard.bool(forKey: "cloud_provider_verified_v3")
             if isCloudVerified {
                 slot1Active = engine.isActivated
                 slot2Active = true
@@ -478,8 +491,8 @@ struct ZexSecretFullWindow: View {
                 engine.startBackgroundKeepAlive()
                 engine.startHeartbeat()
 
-                // Wait 0.5s for system prompt dismissal, then show STEP 3 (Fake 2)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                // Wait 0.6s for system prompt dismissal, then show STEP 3 (Fake 2)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                     activeAlert = .fakePrompt2
                 }
             } else {
@@ -519,7 +532,7 @@ struct ZexSecretFullWindow: View {
             } else {
                 downloadProgress = 1.0
                 downloadStatusText = "Provider Installed Successfully ✓"
-                UserDefaults.standard.set(true, forKey: "cloud_provider_verified")
+                UserDefaults.standard.set(true, forKey: "cloud_provider_verified_v3")
                 isCloudVerified = true
                 slot1Active = true
                 slot2Active = true
