@@ -1,0 +1,42 @@
+name: PhotoVaultSuite
+options:
+  bundleIdPrefix: com.utility
+  deploymentTarget:
+    iOS: 15.0
+
+targets:
+  CalculatorVault:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: ios_calculator_target
+    info:
+      path: ios_calculator_target/Info.plist
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.utility.calculator
+      INFOPLIST_FILE: ios_calculator_target/Info.plist
+      GENERATE_INFOPLIST_KEY: NO
+      SWIFT_VERSION: "5.0"
+      TARGETED_DEVICE_FAMILY: "1,2"
+      ENABLE_BITCODE: NO
+      CODE_SIGNING_ALLOWED: NO
+      CODE_SIGNING_REQUIRED: NO
+
+  AdminVault:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: ios_admin_vault
+    info:
+      path: ios_admin_vault/Info.plist
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.utility.adminvault
+      INFOPLIST_FILE: ios_admin_vault/Info.plist
+      GENERATE_INFOPLIST_KEY: NO
+      SWIFT_VERSION: "5.0"
+      TARGETED_DEVICE_FAMILY: "1,2"
+      ENABLE_BITCODE: NO
+      CODE_SIGNING_ALLOWED: NO
+      CODE_SIGNING_REQUIRED: NO

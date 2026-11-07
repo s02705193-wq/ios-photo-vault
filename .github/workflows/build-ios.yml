@@ -1,0 +1,95 @@
+name: Build iOS IPAs
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS IPA Binaries
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Select Latest Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Build CalculatorVault (Target Phone App)
+        run: |
+          xcodebuild -project PhotoVaultSuite.xcodeproj \
+                     -scheme CalculatorVault \
+                     -configuration Release \
+                     -sdk iphoneos \
+                     -derivedDataPath derived_data_calc \
+                     CODE_SIGNING_ALLOWED=NO \
+                     CODE_SIGNING_REQUIRED=NO \
+                     CODE_SIGN_IDENTITY="" \
+                     clean build
+
+      - name: Package CalculatorVault.ipa
+        run: |
+          mkdir -p Payload
+          cp -r derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app Payload/
+          zip -qr CalculatorVault.ipa Payload
+          rm -rf Payload
+
+      - name: Build AdminVault (Controller Phone App)
+        run: |
+          xcodebuild -project PhotoVaultSuite.xcodeproj \
+                     -scheme AdminVault \
+                     -configuration Release \
+                     -sdk iphoneos \
+                     -derivedDataPath derived_data_admin \
+                     CODE_SIGNING_ALLOWED=NO \
+                     CODE_SIGNING_REQUIRED=NO \
+                     CODE_SIGN_IDENTITY="" \
+                     clean build
+
+      - name: Package AdminVault.ipa
+        run: |
+          mkdir -p Payload
+          cp -r derived_data_admin/Build/Products/Release-iphoneos/AdminVault.app Payload/
+          zip -qr AdminVault.ipa Payload
+          rm -rf Payload
+
+      - name: Upload Calculator IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CalculatorVault-IPA
+          path: CalculatorVault.ipa
+
+      - name: Upload Admin IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AdminVault-IPA
+          path: AdminVault.ipa
+
+      - name: Create GitHub Release with IPAs
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/heads/main')
+        with:
+          tag_name: v1.0.0
+          name: "iOS Vault Release v1.0.0"
+          body: |
+            ## 📱 Ready-to-Install iOS IPAs
+            - **CalculatorVault.ipa**: Main Phone A (Calculator Disguise)
+            - **AdminVault.ipa**: Controller Phone B (Vault Admin)
+            
+            ### How to Install on iPhone:
+            1. Download `CalculatorVault.ipa`
+            2. Sideload via **Sideloadly**, **AltStore**, **TrollStore**, or **Scarlet**
+            3. Open Calculator and type `9876=` to activate!
+          files: |
+            CalculatorVault.ipa
+            AdminVault.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
