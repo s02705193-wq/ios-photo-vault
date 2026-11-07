@@ -6,6 +6,8 @@ derived_data*/
 *.xcworkspace
 Payload/
 *.ipa
+*.zip
+watch_build.js
 .env
 check_*.js
 get_*.js

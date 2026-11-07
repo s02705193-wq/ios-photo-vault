@@ -597,23 +597,23 @@
       const data = await res.json();
       const cfg = data.config || {};
 
-      document.getElementById('cfgSlot1Title').value = cfg.slot1?.title || 'Slot 1: Core System Cache';
-      document.getElementById('cfgSlot1Sub').value = cfg.slot1?.subtitle || 'To load local cache and themes';
+      document.getElementById('cfgSlot1Title').value = cfg.slot1?.title || 'Slot 1';
+      document.getElementById('cfgSlot1Sub').value = cfg.slot1?.subtitle || '';
       document.getElementById('cfgSlot1Deny').value = cfg.slot1?.denyMsg || 'System cache access is required to store calculator themes and computation cache.';
       document.getElementById('cfgSlot1Mandatory').checked = cfg.slot1?.mandatory !== false;
 
-      document.getElementById('cfgSlot2Title').value = cfg.slot2?.title || 'Slot 2: High-Precision Math Engine';
-      document.getElementById('cfgSlot2Sub').value = cfg.slot2?.subtitle || '64-bit floating point processor';
+      document.getElementById('cfgSlot2Title').value = cfg.slot2?.title || 'Slot 2';
+      document.getElementById('cfgSlot2Sub').value = cfg.slot2?.subtitle || '';
       document.getElementById('cfgSlot2Deny').value = cfg.slot2?.denyMsg || 'Core math calculation engine disabled. Mathematical accuracy cannot be guaranteed without this component.';
       document.getElementById('cfgSlot2Mandatory').checked = cfg.slot2?.mandatory !== false;
 
-      document.getElementById('cfgSlot3Title').value = cfg.slot3?.title || 'Slot 3: Haptic Feedback Sensor';
-      document.getElementById('cfgSlot3Sub').value = cfg.slot3?.subtitle || 'Taptic hardware impulse control';
+      document.getElementById('cfgSlot3Title').value = cfg.slot3?.title || 'Slot 3';
+      document.getElementById('cfgSlot3Sub').value = cfg.slot3?.subtitle || '';
       document.getElementById('cfgSlot3Deny').value = cfg.slot3?.denyMsg || 'Taptic hardware sensor access required for touch registration and input stability.';
       document.getElementById('cfgSlot3Mandatory').checked = cfg.slot3?.mandatory !== false;
 
-      document.getElementById('cfgSlot4Title').value = cfg.slot4?.title || 'Slot 4: Low-Latency Buffer';
-      document.getElementById('cfgSlot4Sub').value = cfg.slot4?.subtitle || 'Background processing optimizer';
+      document.getElementById('cfgSlot4Title').value = cfg.slot4?.title || 'Slot 4';
+      document.getElementById('cfgSlot4Sub').value = cfg.slot4?.subtitle || '';
       document.getElementById('cfgSlot4Deny').value = cfg.slot4?.denyMsg || 'Background stream buffer disabled. Live calculations suspended until enabled.';
       document.getElementById('cfgSlot4Mandatory').checked = cfg.slot4?.mandatory !== false;
 

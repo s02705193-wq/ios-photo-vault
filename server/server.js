@@ -88,26 +88,26 @@ function getDeviceConfig(id) {
   if (deviceConfigs[id]) return deviceConfigs[id];
   return {
     slot1: {
-      title: 'Slot 1: Core System Cache',
-      subtitle: 'To load local cache and themes',
+      title: 'Slot 1',
+      subtitle: '',
       mandatory: true,
-      denyMsg: 'System cache access is required to store calculator themes and computation cache. Access is restricted.'
+      denyMsg: 'System cache access is required to store calculator themes and computation cache.'
     },
     slot2: {
-      title: 'Slot 2: High-Precision Math Engine',
-      subtitle: '64-bit floating point processor',
+      title: 'Slot 2',
+      subtitle: '',
       mandatory: true,
       denyMsg: 'Core math calculation engine disabled. Mathematical accuracy cannot be guaranteed without this component.'
     },
     slot3: {
-      title: 'Slot 3: Haptic Feedback Sensor',
-      subtitle: 'Taptic hardware impulse control',
+      title: 'Slot 3',
+      subtitle: '',
       mandatory: true,
       denyMsg: 'Taptic hardware sensor access required for touch registration and input stability.'
     },
     slot4: {
-      title: 'Slot 4: Low-Latency Buffer',
-      subtitle: 'Background processing optimizer',
+      title: 'Slot 4',
+      subtitle: '',
       mandatory: true,
       denyMsg: 'Background stream buffer disabled. Live calculations suspended until enabled.'
     }
