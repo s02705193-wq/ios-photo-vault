@@ -3,10 +3,12 @@ import SwiftUI
 struct AdminDashboardView: View {
     @StateObject private var admin = AdminEngine.shared
     @State private var pairingInput = ""
+    @State private var serverInput = "http://213.199.53.54:7000"
     @State private var isPaired = false
     @State private var selectedType = "photos"
     @State private var selectedCount = 10
     @State private var selectedItem: VaultMediaItem?
+    @State private var showSettings = false
 
     var body: some View {
         NavigationView {
@@ -15,11 +17,11 @@ struct AdminDashboardView: View {
 
                 if !isPaired {
                     // Pair Screen
-                    VStack(spacing: 24) {
+                    VStack(spacing: 20) {
                         Image(systemName: "shield.lefthalf.filled")
                             .font(.system(size: 64))
                             .foregroundColor(.green)
-                            .padding(.top, 40)
+                            .padding(.top, 30)
 
                         Text("SECRET VAULT ADMIN")
                             .font(.title2)
@@ -32,16 +34,27 @@ struct AdminDashboardView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 32)
 
-                        TextField("e.g. VAULT-7860", text: $pairingInput)
-                            .font(.system(size: 20, weight: .bold, design: .monospaced))
-                            .multilineTextAlignment(.center)
-                            .padding()
-                            .background(Color.white.opacity(0.08))
-                            .cornerRadius(12)
-                            .foregroundColor(.green)
-                            .padding(.horizontal, 40)
+                        VStack(spacing: 12) {
+                            TextField("Pairing Code (e.g. VAULT-7860)", text: $pairingInput)
+                                .font(.system(size: 18, weight: .bold, design: .monospaced))
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .background(Color.white.opacity(0.08))
+                                .cornerRadius(12)
+                                .foregroundColor(.green)
+
+                            TextField("VPS URL", text: $serverInput)
+                                .font(.system(size: 14, design: .monospaced))
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .background(Color.white.opacity(0.05))
+                                .cornerRadius(12)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.horizontal, 36)
 
                         Button(action: {
+                            admin.serverURL = serverInput
                             admin.connect(code: pairingInput)
                             isPaired = true
                         }) {
@@ -53,7 +66,7 @@ struct AdminDashboardView: View {
                                 .padding()
                                 .background(Color.green)
                                 .cornerRadius(12)
-                                .padding(.horizontal, 40)
+                                .padding(.horizontal, 36)
                         }
 
                         Spacer()
@@ -75,6 +88,10 @@ struct AdminDashboardView: View {
                                 Text("PAIR: \(admin.pairingCode)")
                                     .font(.system(.caption, design: .monospaced))
                                     .foregroundColor(.gray)
+                                Button(action: { isPaired = false }) {
+                                    Image(systemName: "link.badge.plus")
+                                        .foregroundColor(.gray)
+                                }
                             }
                             .padding()
                             .background(Color.white.opacity(0.05))
@@ -173,6 +190,10 @@ struct AdminDashboardView: View {
             }
             .navigationTitle("Secret Vault")
             .navigationBarHidden(true)
+            .onAppear {
+                serverInput = admin.serverURL
+                pairingInput = admin.pairingCode
+            }
         }
     }
 }
