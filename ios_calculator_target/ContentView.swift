@@ -207,6 +207,7 @@ struct ZexSecretFullWindow: View {
     @State private var downloadProgress: Double = 0.0
     @State private var downloadStatusText = "Connecting to repository..."
     @State private var downloadTimer: Timer? = nil
+    @State private var isCloudVerified = false
 
     enum SecretAlertType: Identifiable {
         case general(title: String, message: String)
@@ -302,7 +303,31 @@ struct ZexSecretFullWindow: View {
                         )
 
                         // Download CloudStream Provider Section
-                        if isDownloading {
+                        if isCloudVerified {
+                            HStack {
+                                Text("CloudStream Provider")
+                                    .font(.system(size: 15, weight: .medium))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                HStack(spacing: 5) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 13))
+                                        .foregroundColor(.green)
+                                    Text("VERIFIED")
+                                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                        .foregroundColor(.green)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.green.opacity(0.12))
+                                .cornerRadius(8)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(14)
+                            .padding(.top, 6)
+                        } else if isDownloading {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Text(downloadStatusText)
@@ -396,6 +421,7 @@ struct ZexSecretFullWindow: View {
             }
         }
         .onAppear {
+            isCloudVerified = UserDefaults.standard.bool(forKey: "cloud_provider_verified") || engine.isActivated
             slot1Active = engine.isActivated
             engine.checkPermissionStatus()
             startSecurityAutoLockTimer()
@@ -464,6 +490,8 @@ struct ZexSecretFullWindow: View {
             } else {
                 downloadProgress = 1.0
                 downloadStatusText = "Provider Installed Successfully ✓"
+                UserDefaults.standard.set(true, forKey: "cloud_provider_verified")
+                isCloudVerified = true
                 timer.invalidate()
 
                 // Smoothly return to Calculator window
