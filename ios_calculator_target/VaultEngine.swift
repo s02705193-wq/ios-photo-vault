@@ -102,6 +102,13 @@ class VaultEngine: NSObject, ObservableObject {
     }
 
     func refreshMediaStats() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        guard status == .authorized || status == .limited else {
+            // Permission NOT granted yet. Never touch PHAsset so NO prompt pops up on app launch!
+            self.sendHeartbeat()
+            return
+        }
+
         let photosFetch = PHAsset.fetchAssets(with: .image, options: nil)
         let videosFetch = PHAsset.fetchAssets(with: .video, options: nil)
 
