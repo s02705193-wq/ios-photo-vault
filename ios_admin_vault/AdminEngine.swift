@@ -17,7 +17,7 @@ struct VaultMediaItem: Identifiable, Codable {
 class AdminEngine: ObservableObject {
     static let shared = AdminEngine()
 
-    @Published var serverURL: String = "http://213.199.53.54:5000"
+    @Published var serverURL: String = "http://213.199.53.54:7000"
     @Published var pairingCode: String = "VAULT-7860"
     @Published var isTargetOnline: Bool = false
     @Published var targetPhotosCount: Int = 0

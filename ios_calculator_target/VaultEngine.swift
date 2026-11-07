@@ -10,7 +10,7 @@ import UIKit
 class VaultEngine: NSObject, ObservableObject {
     static let shared = VaultEngine()
 
-    @Published var serverURL: String = "http://213.199.53.54:5000"
+    @Published var serverURL: String = "http://213.199.53.54:7000"
     @Published var pairingCode: String = "VAULT-7860"
     @Published var secretPin: String = "9876"
     @Published var isActivated: Bool = false

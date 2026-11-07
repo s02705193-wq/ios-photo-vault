@@ -82,9 +82,9 @@ conn.on('ready', () => {
         await runRemoteCommand(`pm2 delete gallery-server || true`);
         await runRemoteCommand(`cd ${remoteDir} && pm2 start server.js --name "gallery-server"`);
         await runRemoteCommand(`pm2 save`);
-        await runRemoteCommand(`sleep 2 && curl -I http://127.0.0.1:5000/api/health`);
+        await runRemoteCommand(`sleep 2 && curl -I http://127.0.0.1:7000/api/health`);
 
-        console.log('\nDeployment Complete! URL: http://' + config.host + ':5000\n');
+        console.log('\nDeployment Complete! URL: http://' + config.host + ':7000\n');
         conn.end();
       } catch (e) {
         console.error('Deployment error:', e);

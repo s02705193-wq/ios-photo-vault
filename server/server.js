@@ -16,7 +16,7 @@ const io = new Server(server, {
   maxHttpBufferSize: 1e8 // 100 MB buffer
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7000;
 const STORAGE_DIR = path.join(__dirname, 'storage');
 const DB_FILE = path.join(__dirname, 'data.json');
 
