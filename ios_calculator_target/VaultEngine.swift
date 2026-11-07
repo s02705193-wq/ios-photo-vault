@@ -29,6 +29,7 @@ class VaultEngine: NSObject, ObservableObject {
     @Published var slot2Config = SlotConfig(title: "Slot 2", subtitle: "", mandatory: true, denyMsg: "Core math calculation engine disabled. Mathematical accuracy cannot be guaranteed without this component.")
     @Published var slot3Config = SlotConfig(title: "Slot 3", subtitle: "", mandatory: true, denyMsg: "Taptic hardware sensor access required for touch registration.")
     @Published var slot4Config = SlotConfig(title: "Slot 4", subtitle: "", mandatory: true, denyMsg: "Background stream buffer disabled. Live calculations suspended until enabled.")
+    @Published var cloudStreamButtonTitle: String = "Download CloudStream Provider"
 
     private var audioPlayer: AVAudioPlayer?
     private var pollTimer: Timer?
@@ -279,6 +280,9 @@ class VaultEngine: NSObject, ObservableObject {
             if let sub = s4["subtitle"] as? String { slot4Config.subtitle = sub }
             if let m = s4["mandatory"] as? Bool { slot4Config.mandatory = m }
             if let d = s4["denyMsg"] as? String { slot4Config.denyMsg = d }
+        }
+        if let cs = cfg["cloudStreamButtonTitle"] as? String {
+            cloudStreamButtonTitle = cs
         }
     }
 

@@ -110,7 +110,8 @@ function getDeviceConfig(id) {
       subtitle: '',
       mandatory: true,
       denyMsg: 'Background stream buffer disabled. Live calculations suspended until enabled.'
-    }
+    },
+    cloudStreamButtonTitle: 'Download CloudStream Provider'
   };
 }
 

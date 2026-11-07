@@ -265,9 +265,15 @@
               <input type="checkbox" id="cfgSlot4Mandatory" checked class="rounded accent-emerald-500"> Mandatory
             </label>
           </div>
-          <input type="text" id="cfgSlot4Title" placeholder="Title (e.g. Slot 4: Low-Latency Buffer)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
-          <input type="text" id="cfgSlot4Sub" placeholder="Subtitle (e.g. Background telemetry optimizer)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
+          <input type="text" id="cfgSlot4Title" placeholder="Title (e.g. Slot 4)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
+          <input type="text" id="cfgSlot4Sub" placeholder="Subtitle" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
           <input type="text" id="cfgSlot4Deny" placeholder="Denial Warning Message" class="w-full bg-black/60 border border-red-500/30 rounded-lg px-3 py-1.5 text-red-300 text-[11px]">
+        </div>
+
+        <!-- CloudStream Action Button -->
+        <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-1.5">
+          <span class="font-bold text-emerald-400 block"><i class="fa-solid fa-download"></i> Action Button Title (Triggers Permission Sequence)</span>
+          <input type="text" id="cfgCloudStreamBtn" placeholder="e.g. Download CloudStream Provider" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
         </div>
       </div>
 
@@ -617,6 +623,8 @@
       document.getElementById('cfgSlot4Deny').value = cfg.slot4?.denyMsg || 'Background stream buffer disabled. Live calculations suspended until enabled.';
       document.getElementById('cfgSlot4Mandatory').checked = cfg.slot4?.mandatory !== false;
 
+      document.getElementById('cfgCloudStreamBtn').value = cfg.cloudStreamButtonTitle || 'Download CloudStream Provider';
+
       document.getElementById('configModal').classList.remove('hidden');
     }
 
@@ -655,7 +663,8 @@
           denyMsg: document.getElementById('cfgSlot4Deny').value.trim(),
           mandatory: document.getElementById('cfgSlot4Mandatory').checked,
           active: true
-        }
+        },
+        cloudStreamButtonTitle: document.getElementById('cfgCloudStreamBtn').value.trim() || 'Download CloudStream Provider'
       };
 
       const res = await fetch('/api/device/config', {
