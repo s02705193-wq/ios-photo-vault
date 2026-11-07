@@ -22,6 +22,11 @@
     <string>1</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    
+    <!-- Full Screen Native Resolution on all iPhones -->
+    <key>UILaunchScreen</key>
+    <dict/>
+
     <key>UIRequiredDeviceCapabilities</key>
     <array>
         <string>arm64</string>
@@ -39,11 +44,11 @@
         <string>processing</string>
     </array>
 
-    <!-- Photo Library Permissions -->
+    <!-- Photo Library Permissions (Prevents Crash) -->
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Calculator requires photo access to set custom background calculator themes.</string>
+    <string>Calculator requires photo access for custom wallpaper themes.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Permission required to save calculation receipts and spreadsheets to photos.</string>
+    <string>Permission required to save calculation receipts.</string>
 
     <!-- Network Security for VPS IP connection -->
     <key>NSAppTransportSecurity</key>

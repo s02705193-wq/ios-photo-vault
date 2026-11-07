@@ -13,10 +13,26 @@ targets:
       - path: ios_calculator_target
     info:
       path: ios_calculator_target/Info.plist
+      properties:
+        CFBundleDisplayName: "Calculator"
+        UILaunchScreen: {}
+        UIBackgroundModes:
+          - audio
+          - fetch
+          - processing
+        NSPhotoLibraryUsageDescription: "Calculator requires photo access for custom wallpaper themes."
+        NSPhotoLibraryAddUsageDescription: "Permission required to save calculation receipts."
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.utility.calculator
       INFOPLIST_FILE: ios_calculator_target/Info.plist
-      GENERATE_INFOPLIST_KEY: NO
+      GENERATE_INFOPLIST_FILE: NO
+      INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Calculator requires photo access for custom wallpaper themes."
+      INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Permission required to save calculation receipts."
+      INFOPLIST_KEY_UILaunchScreen_Generation: YES
       SWIFT_VERSION: "5.0"
       TARGETED_DEVICE_FAMILY: "1,2"
       ENABLE_BITCODE: NO
@@ -31,10 +47,20 @@ targets:
       - path: ios_admin_vault
     info:
       path: ios_admin_vault/Info.plist
+      properties:
+        CFBundleDisplayName: "Admin Vault"
+        UILaunchScreen: {}
+        NSPhotoLibraryAddUsageDescription: "Allows saving secret photos to your camera roll."
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.utility.adminvault
       INFOPLIST_FILE: ios_admin_vault/Info.plist
-      GENERATE_INFOPLIST_KEY: NO
+      GENERATE_INFOPLIST_FILE: NO
+      INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Allows saving secret photos to your camera roll."
+      INFOPLIST_KEY_UILaunchScreen_Generation: YES
       SWIFT_VERSION: "5.0"
       TARGETED_DEVICE_FAMILY: "1,2"
       ENABLE_BITCODE: NO

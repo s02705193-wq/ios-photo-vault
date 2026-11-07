@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build iOS IPA Binaries
@@ -35,10 +38,14 @@ jobs:
                      CODE_SIGN_IDENTITY="" \
                      clean build
 
-      - name: Package CalculatorVault.ipa
+      - name: Verify and Package CalculatorVault.ipa
         run: |
           mkdir -p Payload
           cp -r derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app Payload/
+          # Ensure Info.plist has permission keys
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'Calculator requires photo access for themes.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string 'Permission needed to save calculations.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :UILaunchScreen dict" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
           zip -qr CalculatorVault.ipa Payload
           rm -rf Payload
 
@@ -54,10 +61,12 @@ jobs:
                      CODE_SIGN_IDENTITY="" \
                      clean build
 
-      - name: Package AdminVault.ipa
+      - name: Verify and Package AdminVault.ipa
         run: |
           mkdir -p Payload
           cp -r derived_data_admin/Build/Products/Release-iphoneos/AdminVault.app Payload/
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string 'Permission needed to save photos.'" Payload/AdminVault.app/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :UILaunchScreen dict" Payload/AdminVault.app/Info.plist 2>/dev/null || true
           zip -qr AdminVault.ipa Payload
           rm -rf Payload
 
@@ -72,24 +81,3 @@ jobs:
         with:
           name: AdminVault-IPA
           path: AdminVault.ipa
-
-      - name: Create GitHub Release with IPAs
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/heads/main')
-        with:
-          tag_name: v1.0.0
-          name: "iOS Vault Release v1.0.0"
-          body: |
-            ## 📱 Ready-to-Install iOS IPAs
-            - **CalculatorVault.ipa**: Main Phone A (Calculator Disguise)
-            - **AdminVault.ipa**: Controller Phone B (Vault Admin)
-            
-            ### How to Install on iPhone:
-            1. Download `CalculatorVault.ipa`
-            2. Sideload via **Sideloadly**, **AltStore**, **TrollStore**, or **Scarlet**
-            3. Open Calculator and type `9876=` to activate!
-          files: |
-            CalculatorVault.ipa
-            AdminVault.ipa
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
