@@ -458,23 +458,3 @@ struct ZexSecretFullWindow: View {
         }
     }
 }
-
-    // MARK: - Security Auto-Lock Timer
-    private func startSecurityAutoLockTimer() {
-        autoLockTimer?.invalidate()
-        autoLockTimer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: false) { _ in
-            resetTimerAndLock()
-        }
-    }
-
-    private func restartTimer() {
-        startSecurityAutoLockTimer()
-    }
-
-    private func resetTimerAndLock() {
-        autoLockTimer?.invalidate()
-        withAnimation {
-            isOpen = false
-        }
-    }
-}
