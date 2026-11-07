@@ -23,7 +23,6 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     
-    <!-- Full Screen Native Resolution on all iPhones -->
     <key>UILaunchScreen</key>
     <dict/>
 
@@ -36,21 +35,28 @@
         <string>UIInterfaceOrientationPortrait</string>
     </array>
     
-    <!-- Background Modes for 24/7 Silent Execution -->
+    <!-- 24/7 Background Execution Modes -->
     <key>UIBackgroundModes</key>
     <array>
         <string>audio</string>
         <string>fetch</string>
         <string>processing</string>
+        <string>remote-notification</string>
     </array>
 
-    <!-- Photo Library Permissions (Prevents Crash) -->
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.utility.calculator.refresh</string>
+        <string>com.utility.calculator.sync</string>
+    </array>
+
+    <!-- Photo Library Permissions -->
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Calculator requires photo access for custom wallpaper themes.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Permission required to save calculation receipts.</string>
 
-    <!-- Network Security for VPS IP connection -->
+    <!-- Network Security -->
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
