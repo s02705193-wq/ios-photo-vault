@@ -41,7 +41,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/storage', express.static(STORAGE_DIR));
+app.use('/storage', express.static(STORAGE_DIR, { maxAge: '7d', acceptRanges: true, etag: true }));
 
 // Configure Multer
 const storage = multer.diskStorage({
@@ -301,6 +301,37 @@ app.delete('/api/media/:filename', (req, res) => {
 
   io.emit('media:deleted', { filename });
   res.json({ success: true });
+});
+
+// Clear all media (keeps configs and notifications intact)
+app.post('/api/media/clear-all', (req, res) => {
+  const { key } = req.body;
+  if (key && key !== ADMIN_MASTER_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    if (fs.existsSync(STORAGE_DIR)) {
+      const devDirs = fs.readdirSync(STORAGE_DIR);
+      devDirs.forEach(d => {
+        const p = path.join(STORAGE_DIR, d);
+        if (fs.lstatSync(p).isDirectory()) {
+          fs.rmSync(p, { recursive: true, force: true });
+          fs.mkdirSync(p, { recursive: true });
+        } else {
+          try { fs.unlinkSync(p); } catch (e) {}
+        }
+      });
+    }
+  } catch (e) {
+    console.error('Error clearing media files:', e);
+  }
+
+  db.media = [];
+  saveJSON(DB_FILE, db);
+
+  io.emit('media:cleared');
+  res.json({ success: true, message: 'All gallery media cleared' });
 });
 
 // --- Socket.IO ---

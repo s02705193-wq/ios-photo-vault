@@ -181,15 +181,21 @@
 
       <!-- VAULT STORED MEDIA GRID -->
       <div class="card-glass rounded-2xl p-6 space-y-4">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
             <h2 class="text-base font-bold text-white">Vault Media Gallery</h2>
             <span id="vaultCountBadge" class="bg-white/10 text-gray-300 text-xs px-2.5 py-0.5 rounded-full font-mono">0 items</span>
           </div>
-          <button onclick="loadVaultMedia()" class="text-xs text-gray-400 hover:text-white flex items-center gap-1.5 transition-colors">
-            <i class="fa-solid fa-arrows-rotate"></i>
-            <span>Refresh Gallery</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="clearAllMedia()" class="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 text-xs font-bold flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-trash-can"></i>
+              <span>Clear Gallery Media</span>
+            </button>
+            <button onclick="loadVaultMedia()" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white text-xs flex items-center gap-1.5 transition-colors">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
         </div>
 
         <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
@@ -613,6 +619,25 @@
     function closeModal() {
       document.getElementById('mediaModal').classList.add('hidden');
       document.getElementById('modalContent').innerHTML = '';
+    }
+
+    async function clearAllMedia() {
+      if (!confirm("Are you sure you want to delete ALL photos & videos from the server gallery?\n(Your slot names, notifications, and device configs will NOT be deleted)")) return;
+      try {
+        const res = await fetch('/api/media/clear-all', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: 'zex786' })
+        });
+        if (res.ok) {
+          alert("All gallery photos & videos successfully deleted! Slots & configs were preserved.");
+          loadVaultMedia();
+        } else {
+          alert("Failed to clear media");
+        }
+      } catch (e) {
+        alert("Error connecting to server");
+      }
     }
 
     // Dynamic Config Modal
