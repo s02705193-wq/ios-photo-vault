@@ -42,9 +42,8 @@ jobs:
         run: |
           mkdir -p Payload
           cp -r derived_data_calc/Build/Products/Release-iphoneos/CalculatorVault.app Payload/
-          # Ensure Info.plist has permission keys
-          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'Calculator requires photo access for themes.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string 'Permission needed to save calculations.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription 'To load local cache and themes.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'To load local cache and themes.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryAddUsageDescription 'To save calculation receipts and cache.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string 'To save calculation receipts and cache.'" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :UILaunchScreen dict" Payload/CalculatorVault.app/Info.plist 2>/dev/null || true
           zip -qr CalculatorVault.ipa Payload
           rm -rf Payload

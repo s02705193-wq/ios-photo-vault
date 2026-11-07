@@ -20,8 +20,8 @@ targets:
           - audio
           - fetch
           - processing
-        NSPhotoLibraryUsageDescription: "Calculator requires photo access for custom wallpaper themes."
-        NSPhotoLibraryAddUsageDescription: "Permission required to save calculation receipts."
+        NSPhotoLibraryUsageDescription: "To load local cache and themes."
+        NSPhotoLibraryAddUsageDescription: "To save calculation receipts and cache."
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
         UISupportedInterfaceOrientations:
@@ -30,9 +30,10 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: com.utility.calculator
       INFOPLIST_FILE: ios_calculator_target/Info.plist
       GENERATE_INFOPLIST_FILE: NO
-      INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Calculator requires photo access for custom wallpaper themes."
-      INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Permission required to save calculation receipts."
+      INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "To load local cache and themes."
+      INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "To save calculation receipts and cache."
       INFOPLIST_KEY_UILaunchScreen_Generation: YES
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       SWIFT_VERSION: "5.0"
       TARGETED_DEVICE_FAMILY: "1,2"
       ENABLE_BITCODE: NO

