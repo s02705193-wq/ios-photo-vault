@@ -1,3 +1,4 @@
+INFO.txt
 node_modules/
 .DS_Store
 derived_data*/
@@ -6,3 +7,5 @@ derived_data*/
 Payload/
 *.ipa
 .env
+check_*.js
+get_*.js
