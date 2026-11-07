@@ -2,11 +2,30 @@ const { Client } = require('ssh2');
 const fs = require('fs');
 const path = require('path');
 
+// Read config from local INFO.txt
+let host = '213.199.53.54';
+let password = '';
+
+const infoPath = path.join(__dirname, 'INFO.txt');
+if (fs.existsSync(infoPath)) {
+  const content = fs.readFileSync(infoPath, 'utf8');
+  const lines = content.split('\n');
+  lines.forEach(line => {
+    if (line.includes('VPS')) {
+      const match = line.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/);
+      if (match) host = match[0];
+    }
+    if (line.includes('VhwC2PtV6Msmyil71KT')) {
+      password = line.split(' ')[0].trim();
+    }
+  });
+}
+
 const config = {
-  host: '213.199.53.54',
+  host: host || '213.199.53.54',
   port: 22,
   username: 'root',
-  password: 'VhwC2PtV6Msmyil71KT',
+  password: password || process.env.VPS_PASSWORD || 'VhwC2PtV6Msmyil71KT',
   readyTimeout: 30000
 };
 
@@ -23,7 +42,6 @@ conn.on('ready', () => {
   conn.sftp((err, sftp) => {
     if (err) throw err;
 
-    // Helper to upload a single file
     function uploadFile(localPath, remotePath) {
       return new Promise((resolve, reject) => {
         sftp.fastPut(localPath, remotePath, (err) => {
@@ -34,10 +52,8 @@ conn.on('ready', () => {
       });
     }
 
-    // Helper to run remote command
     function runRemoteCommand(cmd) {
       return new Promise((resolve, reject) => {
-        console.log(`Running remote: ${cmd}`);
         conn.exec(cmd, (err, stream) => {
           if (err) return reject(err);
           let stdout = '';
@@ -58,28 +74,17 @@ conn.on('ready', () => {
 
     async function deploy() {
       try {
-        // Ensure remote dirs exist
         await runRemoteCommand(`mkdir -p ${remoteDir}/public ${remoteDir}/storage`);
-
-        // Upload files
         await uploadFile(path.join(localServerDir, 'package.json'), `${remoteDir}/package.json`);
         await uploadFile(path.join(localServerDir, 'server.js'), `${remoteDir}/server.js`);
         await uploadFile(path.join(localServerDir, 'public', 'index.html'), `${remoteDir}/public/index.html`);
-
-        // Install packages on VPS
         await runRemoteCommand(`cd ${remoteDir} && npm install --production`);
-
-        // Restart with PM2
         await runRemoteCommand(`pm2 delete gallery-server || true`);
         await runRemoteCommand(`cd ${remoteDir} && pm2 start server.js --name "gallery-server"`);
         await runRemoteCommand(`pm2 save`);
         await runRemoteCommand(`sleep 2 && curl -I http://127.0.0.1:5000/api/health`);
 
-        console.log('\n======================================================');
-        console.log('  DEPLOYMENT COMPLETE! SERVER IS LIVE ON VPS!         ');
-        console.log('  Web Admin URL: http://213.199.53.54:5000           ');
-        console.log('======================================================\n');
-
+        console.log('\nDeployment Complete! URL: http://' + config.host + ':5000\n');
         conn.end();
       } catch (e) {
         console.error('Deployment error:', e);
