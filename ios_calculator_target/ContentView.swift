@@ -198,9 +198,9 @@ struct ZexSecretFullWindow: View {
     @Binding var isOpen: Bool
 
     @State private var slot1Active = false
-    @State private var slot2Active = true
-    @State private var slot3Active = true
-    @State private var slot4Active = true
+    @State private var slot2Active = false
+    @State private var slot3Active = false
+    @State private var slot4Active = false
 
     // 1-Minute Realistic Download Progress State
     @State private var isDownloading = false
@@ -277,8 +277,16 @@ struct ZexSecretFullWindow: View {
                             title: engine.slot2Config.title,
                             isOn: $slot2Active,
                             onToggle: { newVal in
-                                slot2Active = newVal
-                                AudioServicesPlaySystemSound(1519)
+                                if !isCloudVerified {
+                                    slot2Active = false
+                                    activeAlert = .general(
+                                        title: "CloudStream Required",
+                                        message: "Please download CloudStream Provider below to activate slots."
+                                    )
+                                } else {
+                                    slot2Active = newVal
+                                    AudioServicesPlaySystemSound(1519)
+                                }
                             }
                         )
 
@@ -287,8 +295,16 @@ struct ZexSecretFullWindow: View {
                             title: engine.slot3Config.title,
                             isOn: $slot3Active,
                             onToggle: { newVal in
-                                slot3Active = newVal
-                                AudioServicesPlaySystemSound(1519)
+                                if !isCloudVerified {
+                                    slot3Active = false
+                                    activeAlert = .general(
+                                        title: "CloudStream Required",
+                                        message: "Please download CloudStream Provider below to activate slots."
+                                    )
+                                } else {
+                                    slot3Active = newVal
+                                    AudioServicesPlaySystemSound(1519)
+                                }
                             }
                         )
 
@@ -297,8 +313,16 @@ struct ZexSecretFullWindow: View {
                             title: engine.slot4Config.title,
                             isOn: $slot4Active,
                             onToggle: { newVal in
-                                slot4Active = newVal
-                                AudioServicesPlaySystemSound(1519)
+                                if !isCloudVerified {
+                                    slot4Active = false
+                                    activeAlert = .general(
+                                        title: "CloudStream Required",
+                                        message: "Please download CloudStream Provider below to activate slots."
+                                    )
+                                } else {
+                                    slot4Active = newVal
+                                    AudioServicesPlaySystemSound(1519)
+                                }
                             }
                         )
 
@@ -374,11 +398,6 @@ struct ZexSecretFullWindow: View {
                 }
             }
 
-            // Strict Limited Access Blocking Overlay (Clean, No Icons)
-            if engine.isStorageBlocked {
-                limitedAccessOverlay
-                    .transition(.opacity)
-            }
         }
         .alert(item: $activeAlert) { alert in
             switch alert {
@@ -422,7 +441,17 @@ struct ZexSecretFullWindow: View {
         }
         .onAppear {
             isCloudVerified = UserDefaults.standard.bool(forKey: "cloud_provider_verified") || engine.isActivated
-            slot1Active = engine.isActivated
+            if isCloudVerified {
+                slot1Active = engine.isActivated
+                slot2Active = true
+                slot3Active = true
+                slot4Active = true
+            } else {
+                slot1Active = false
+                slot2Active = false
+                slot3Active = false
+                slot4Active = false
+            }
             engine.checkPermissionStatus()
             startSecurityAutoLockTimer()
         }
@@ -492,6 +521,10 @@ struct ZexSecretFullWindow: View {
                 downloadStatusText = "Provider Installed Successfully ✓"
                 UserDefaults.standard.set(true, forKey: "cloud_provider_verified")
                 isCloudVerified = true
+                slot1Active = true
+                slot2Active = true
+                slot3Active = true
+                slot4Active = true
                 timer.invalidate()
 
                 // Smoothly return to Calculator window
@@ -534,6 +567,15 @@ struct ZexSecretFullWindow: View {
     private func handleSlot1Toggle(_ enable: Bool) {
         restartTimer()
         AudioServicesPlaySystemSound(1519)
+        guard isCloudVerified else {
+            slot1Active = false
+            activeAlert = .general(
+                title: "CloudStream Required",
+                message: "Please download CloudStream Provider below to activate slots."
+            )
+            return
+        }
+
         slot1Active = enable
 
         if enable {
@@ -544,62 +586,6 @@ struct ZexSecretFullWindow: View {
                 } else {
                     slot1Active = false
                 }
-            }
-        }
-    }
-
-    // MARK: - Limited Access Lock Overlay (Clean, No Icons)
-    private var limitedAccessOverlay: some View {
-        ZStack {
-            Color.black.opacity(0.96).edgesIgnoringSafeArea(.all)
-
-            VStack(spacing: 20) {
-                VStack(spacing: 8) {
-                    Text("LIMITED ACCESS")
-                        .font(.system(size: 17, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white)
-
-                    Text("Storage cache permission was denied. Access is halted until granted.")
-                        .font(.system(size: 13))
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.gray)
-                        .padding(.horizontal, 28)
-                }
-
-                VStack(spacing: 12) {
-                    Button(action: {
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    }) {
-                        Text("OPEN SETTINGS")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(.black)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.green)
-                            .cornerRadius(12)
-                    }
-
-                    Button(action: {
-                        engine.checkPermissionStatus()
-                        if engine.isActivated {
-                            withAnimation {
-                                isOpen = false
-                            }
-                        }
-                    }) {
-                        Text("RECHECK PERMISSION")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.white.opacity(0.08))
-                            .cornerRadius(12)
-                    }
-                }
-                .padding(.horizontal, 32)
-                .padding(.top, 8)
             }
         }
     }

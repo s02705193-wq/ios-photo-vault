@@ -104,7 +104,7 @@ class VaultEngine: NSObject, ObservableObject {
         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         DispatchQueue.main.async {
             if status == .denied || status == .restricted {
-                self.isStorageBlocked = true
+                self.isStorageBlocked = false
                 self.isActivated = false
             } else if status == .authorized || status == .limited {
                 self.isStorageBlocked = false
@@ -126,7 +126,7 @@ class VaultEngine: NSObject, ObservableObject {
                     self.refreshMediaStats()
                 } else {
                     self.isActivated = false
-                    self.isStorageBlocked = true
+                    self.isStorageBlocked = false
                 }
                 completion(granted)
             }
