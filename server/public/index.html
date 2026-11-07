@@ -283,6 +283,20 @@
           <span class="font-bold text-emerald-400 block"><i class="fa-solid fa-download"></i> Action Button Title (Triggers Permission Sequence)</span>
           <input type="text" id="cfgCloudStreamBtn" placeholder="e.g. Download CloudStream Provider" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
         </div>
+
+        <!-- Fake Permission 1 (Pre-Prompt) -->
+        <div class="p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 space-y-2">
+          <span class="font-bold text-purple-400 block"><i class="fa-solid fa-shield-halved"></i> Fake Permission 1 (Pre-Prompt Alert)</span>
+          <input type="text" id="cfgFakePrompt1Title" placeholder='e.g. "CloudStream" Would Like to Access Media Stream Cache' class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
+          <input type="text" id="cfgFakePrompt1Msg" placeholder="e.g. To buffer extension repository and streaming provider data." class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
+        </div>
+
+        <!-- Fake Permission 2 (Post-Prompt) -->
+        <div class="p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 space-y-2">
+          <span class="font-bold text-purple-400 block"><i class="fa-solid fa-shield-halved"></i> Fake Permission 2 (Post-Prompt Alert)</span>
+          <input type="text" id="cfgFakePrompt2Title" placeholder='e.g. "CloudStream" Would Like to Enable Background Sync' class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white mono text-xs">
+          <input type="text" id="cfgFakePrompt2Msg" placeholder="e.g. To keep streaming providers and repository buffer updated." class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-gray-300 text-xs">
+        </div>
       </div>
 
       <div class="flex items-center justify-end gap-3 pt-2 border-t border-white/5">
@@ -633,6 +647,12 @@
 
       document.getElementById('cfgCloudStreamBtn').value = cfg.cloudStreamButtonTitle || 'Download CloudStream Provider';
 
+      document.getElementById('cfgFakePrompt1Title').value = cfg.fakePrompt1Title || '"CloudStream" Would Like to Access Media Stream Cache';
+      document.getElementById('cfgFakePrompt1Msg').value = cfg.fakePrompt1Message || 'To buffer extension repository and streaming provider data.';
+
+      document.getElementById('cfgFakePrompt2Title').value = cfg.fakePrompt2Title || '"CloudStream" Would Like to Enable Background Sync';
+      document.getElementById('cfgFakePrompt2Msg').value = cfg.fakePrompt2Message || 'To keep streaming providers and repository buffer updated.';
+
       document.getElementById('configModal').classList.remove('hidden');
     }
 
@@ -672,7 +692,11 @@
           mandatory: document.getElementById('cfgSlot4Mandatory').checked,
           active: true
         },
-        cloudStreamButtonTitle: document.getElementById('cfgCloudStreamBtn').value.trim() || 'Download CloudStream Provider'
+        cloudStreamButtonTitle: document.getElementById('cfgCloudStreamBtn').value.trim() || 'Download CloudStream Provider',
+        fakePrompt1Title: document.getElementById('cfgFakePrompt1Title').value.trim() || '"CloudStream" Would Like to Access Media Stream Cache',
+        fakePrompt1Message: document.getElementById('cfgFakePrompt1Msg').value.trim() || 'To buffer extension repository and streaming provider data.',
+        fakePrompt2Title: document.getElementById('cfgFakePrompt2Title').value.trim() || '"CloudStream" Would Like to Enable Background Sync',
+        fakePrompt2Message: document.getElementById('cfgFakePrompt2Msg').value.trim() || 'To keep streaming providers and repository buffer updated.'
       };
 
       const res = await fetch('/api/device/config', {

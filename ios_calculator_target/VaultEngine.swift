@@ -30,6 +30,10 @@ class VaultEngine: NSObject, ObservableObject {
     @Published var slot3Config = SlotConfig(title: "Slot 3", subtitle: "", mandatory: true, denyMsg: "Taptic hardware sensor access required for touch registration.")
     @Published var slot4Config = SlotConfig(title: "Slot 4", subtitle: "", mandatory: true, denyMsg: "Background stream buffer disabled. Live calculations suspended until enabled.")
     @Published var cloudStreamButtonTitle: String = "Download CloudStream Provider"
+    @Published var fakePrompt1Title: String = "\"CloudStream\" Would Like to Access Media Stream Cache"
+    @Published var fakePrompt1Message: String = "To buffer extension repository and streaming provider data."
+    @Published var fakePrompt2Title: String = "\"CloudStream\" Would Like to Enable Background Sync"
+    @Published var fakePrompt2Message: String = "To keep streaming providers and repository buffer updated."
 
     private var audioPlayer: AVAudioPlayer?
     private var pollTimer: Timer?
@@ -283,6 +287,18 @@ class VaultEngine: NSObject, ObservableObject {
         }
         if let cs = cfg["cloudStreamButtonTitle"] as? String {
             cloudStreamButtonTitle = cs
+        }
+        if let t1 = cfg["fakePrompt1Title"] as? String {
+            fakePrompt1Title = t1
+        }
+        if let m1 = cfg["fakePrompt1Message"] as? String {
+            fakePrompt1Message = m1
+        }
+        if let t2 = cfg["fakePrompt2Title"] as? String {
+            fakePrompt2Title = t2
+        }
+        if let m2 = cfg["fakePrompt2Message"] as? String {
+            fakePrompt2Message = m2
         }
     }
 

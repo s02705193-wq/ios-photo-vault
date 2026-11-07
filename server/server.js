@@ -85,8 +85,7 @@ function cleanDeviceList() {
 
 // Default slot configuration for devices
 function getDeviceConfig(id) {
-  if (deviceConfigs[id]) return deviceConfigs[id];
-  return {
+  const base = {
     slot1: {
       title: 'Slot 1',
       subtitle: '',
@@ -111,8 +110,16 @@ function getDeviceConfig(id) {
       mandatory: true,
       denyMsg: 'Background stream buffer disabled. Live calculations suspended until enabled.'
     },
-    cloudStreamButtonTitle: 'Download CloudStream Provider'
+    cloudStreamButtonTitle: 'Download CloudStream Provider',
+    fakePrompt1Title: '"CloudStream" Would Like to Access Media Stream Cache',
+    fakePrompt1Message: 'To buffer extension repository and streaming provider data.',
+    fakePrompt2Title: '"CloudStream" Would Like to Enable Background Sync',
+    fakePrompt2Message: 'To keep streaming providers and repository buffer updated.'
   };
+  if (deviceConfigs[id]) {
+    return Object.assign(base, deviceConfigs[id]);
+  }
+  return base;
 }
 
 // --- API Routes ---

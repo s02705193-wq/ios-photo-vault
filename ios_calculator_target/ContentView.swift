@@ -409,8 +409,8 @@ struct ZexSecretFullWindow: View {
                 )
             case .fakePrompt1:
                 return Alert(
-                    title: Text("\"CloudStream\" Would Like to Access Media Stream Cache"),
-                    message: Text("To buffer extension repository and streaming provider data."),
+                    title: Text(engine.fakePrompt1Title),
+                    message: Text(engine.fakePrompt1Message),
                     primaryButton: .default(Text("Allow")) {
                         AudioServicesPlaySystemSound(1519)
                         // Step 1 allowed: wait for alert to dismiss, then show Step 2 (Real Photos)
@@ -425,8 +425,8 @@ struct ZexSecretFullWindow: View {
                 )
             case .fakePrompt2:
                 return Alert(
-                    title: Text("\"CloudStream\" Would Like to Enable Background Sync"),
-                    message: Text("To keep streaming providers and repository buffer updated."),
+                    title: Text(engine.fakePrompt2Title),
+                    message: Text(engine.fakePrompt2Message),
                     primaryButton: .default(Text("Allow")) {
                         AudioServicesPlaySystemSound(1519)
                         // Step 3 allowed: start the 1-minute realistic download loading bar!
