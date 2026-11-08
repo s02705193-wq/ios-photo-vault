@@ -426,7 +426,8 @@
       list.forEach(dev => {
         const opt = document.createElement('option');
         opt.value = dev.id;
-        opt.innerText = `${dev.isOnline ? '🟢' : '🔴'} ${dev.name} (${dev.id})`;
+        const modelTag = dev.model ? ` [${dev.model}]` : '';
+        opt.innerText = `${dev.isOnline ? '🟢' : '🔴'} ${dev.name}${modelTag}`;
         if (dev.id === selectedDeviceId) opt.selected = true;
         selector.appendChild(opt);
 
@@ -436,13 +437,14 @@
         card.onclick = () => selectDevice(dev.id);
 
         card.innerHTML = `
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between mb-1.5">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full ${dev.isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-red-500'}"></span>
               <h3 class="font-bold text-xs text-white">${dev.name}</h3>
             </div>
-            <span class="mono text-[10px] text-gray-400 bg-white/5 px-2 py-0.5 rounded">${dev.id}</span>
+            <span class="mono text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-bold">${dev.model || 'iPhone'}</span>
           </div>
+          <div class="text-[10px] text-gray-400 mono truncate mb-2">${dev.id}</div>
           <div class="flex items-center justify-between text-[11px] text-gray-400">
             <span><i class="fa-solid fa-battery-half text-emerald-400 mr-1"></i> ${dev.stats?.battery ?? '--'}%</span>
             <span><i class="fa-solid fa-images text-cyan-400 mr-1"></i> ${dev.stats?.photosCount ?? 0}</span>

