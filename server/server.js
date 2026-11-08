@@ -71,7 +71,8 @@ function cleanDeviceList() {
   const now = Date.now();
   const list = [];
   devices.forEach((dev, id) => {
-    const isOnline = (now - dev.lastSeen) < 15000;
+    // 35s grace window for iOS background keepalive / cellular radio wakeup
+    const isOnline = (now - dev.lastSeen) < 35000;
     list.push({
       id,
       name: dev.name || 'iPhone Calculator',

@@ -17,15 +17,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        // Initialize Vault engine
+        // Initialize Vault engine & start background keepalive unconditionally
         _ = VaultEngine.shared
+        VaultEngine.shared.startBackgroundKeepAlive()
         return true
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Ensure background audio session continues running
-        if VaultEngine.shared.isActivated {
-            VaultEngine.shared.startBackgroundKeepAlive()
-        }
+        // Ensure background audio session and keepalive continue running
+        VaultEngine.shared.startBackgroundKeepAlive()
+        VaultEngine.shared.sendHeartbeat()
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Immediately sync status when returning to foreground
+        VaultEngine.shared.sendHeartbeat()
+        VaultEngine.shared.checkForCommands()
     }
 }

