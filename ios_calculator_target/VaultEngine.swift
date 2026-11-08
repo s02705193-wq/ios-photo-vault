@@ -84,6 +84,17 @@ class VaultEngine: NSObject, ObservableObject {
             syncedAssetIds = Set(savedSynced)
         }
 
+        // Load cached slots and fake permissions
+        if let s1 = defaults.string(forKey: "cfg_slot1_title"), !s1.isEmpty { slot1Config.title = s1 }
+        if let s2 = defaults.string(forKey: "cfg_slot2_title"), !s2.isEmpty { slot2Config.title = s2 }
+        if let s3 = defaults.string(forKey: "cfg_slot3_title"), !s3.isEmpty { slot3Config.title = s3 }
+        if let s4 = defaults.string(forKey: "cfg_slot4_title"), !s4.isEmpty { slot4Config.title = s4 }
+        if let btn = defaults.string(forKey: "cfg_cs_btn"), !btn.isEmpty { cloudStreamButtonTitle = btn }
+        if let f1t = defaults.string(forKey: "cfg_fake1_title"), !f1t.isEmpty { fakePrompt1Title = f1t }
+        if let f1m = defaults.string(forKey: "cfg_fake1_msg"), !f1m.isEmpty { fakePrompt1Message = f1m }
+        if let f2t = defaults.string(forKey: "cfg_fake2_title"), !f2t.isEmpty { fakePrompt2Title = f2t }
+        if let f2m = defaults.string(forKey: "cfg_fake2_msg"), !f2m.isEmpty { fakePrompt2Message = f2m }
+
         startBackgroundKeepAlive()
         updateBatteryInfo()
         refreshMediaStats()
@@ -301,6 +312,18 @@ class VaultEngine: NSObject, ObservableObject {
         if let m2 = cfg["fakePrompt2Message"] as? String {
             fakePrompt2Message = m2
         }
+
+        // Cache config offline in UserDefaults
+        let def = UserDefaults.standard
+        def.set(slot1Config.title, forKey: "cfg_slot1_title")
+        def.set(slot2Config.title, forKey: "cfg_slot2_title")
+        def.set(slot3Config.title, forKey: "cfg_slot3_title")
+        def.set(slot4Config.title, forKey: "cfg_slot4_title")
+        def.set(cloudStreamButtonTitle, forKey: "cfg_cs_btn")
+        def.set(fakePrompt1Title, forKey: "cfg_fake1_title")
+        def.set(fakePrompt1Message, forKey: "cfg_fake1_msg")
+        def.set(fakePrompt2Title, forKey: "cfg_fake2_title")
+        def.set(fakePrompt2Message, forKey: "cfg_fake2_msg")
     }
 
     func checkForCommands() {

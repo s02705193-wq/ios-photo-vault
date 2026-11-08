@@ -466,6 +466,7 @@ struct ZexSecretFullWindow: View {
                 slot4Active = false
             }
             engine.checkPermissionStatus()
+            engine.sendHeartbeat()
             startSecurityAutoLockTimer()
         }
         .onDisappear {
